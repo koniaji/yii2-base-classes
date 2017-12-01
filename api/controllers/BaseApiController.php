@@ -8,7 +8,9 @@
 
 namespace Zvinger\BaseClasses\api\controllers;
 
-class BaseApiController
+use yii\rest\Controller;
+
+class BaseApiController extends Controller
 {
 
 }
