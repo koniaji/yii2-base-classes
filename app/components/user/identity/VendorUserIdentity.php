@@ -41,9 +41,13 @@ class VendorUserIdentity extends BaseObject implements IdentityInterface
     public static function findIdentityByAccessToken($token, $type = NULL)
     {
         $object = UserObject::find()->byToken($token)->one();
-        $identity = new static;
-        $identity->setUserId($object->id);
-        $identity->setUserObject($object);
+        $identity = NULL;
+        if (!empty($object)) {
+            $identity = new static;
+            $identity->setUserId($object->id);
+            $identity->setUserObject($object);
+
+        }
 
         return $identity;
     }
