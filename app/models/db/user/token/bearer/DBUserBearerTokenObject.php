@@ -33,7 +33,7 @@ class DBUserBearerTokenObject extends \yii\db\ActiveRecord
             [['user_id', 'status', 'created_at', 'updated_at'], 'integer'],
             [['token'], 'string', 'max' => 255],
             [['token'], 'unique'],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => \Zvinger\BaseClasses\app\models\work\user\object\UserObject::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => \Zvinger\BaseClasses\app\models\work\user\object\VendorUserObject::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 

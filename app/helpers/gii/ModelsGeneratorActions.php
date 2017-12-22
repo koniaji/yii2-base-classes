@@ -13,7 +13,7 @@ class ModelsGeneratorActions
     public static function generateUserModels()
     {
         $nameSpaces = [
-            'user'              => \Zvinger\BaseClasses\app\models\work\user\object\UserObject::class,
+            'user'              => \Zvinger\BaseClasses\app\models\work\user\object\VendorUserObject::class,
             'user_bearer_token' => \Zvinger\BaseClasses\app\models\work\user\token\bearer\UserBearerTokenObject::class,
             'user_mobsol_token' => \Zvinger\Auth\Mobsolutions\models\user\token\UserMobsolutionTokenObject::class,
         ];

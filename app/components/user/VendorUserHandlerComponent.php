@@ -8,10 +8,14 @@
 
 namespace Zvinger\BaseClasses\app\components\user;
 
+use app\components\user\identity\UserIdentity;
+use app\models\work\user\object\VendorUserObject;
 use Zvinger\BaseClasses\app\components\user\events\UserCreatedEvent;
+use Zvinger\BaseClasses\app\components\user\exceptions\UserLoginException;
 use Zvinger\BaseClasses\app\components\user\identity\handlers\UserCreateHandler;
 use yii\base\BaseObject;
 use yii\base\Component;
+use Zvinger\BaseClasses\app\components\user\identity\VendorUserIdentity;
 
 class VendorUserHandlerComponent extends Component
 {
@@ -30,5 +34,19 @@ class VendorUserHandlerComponent extends Component
         $this->trigger(self::EVENT_USER_CREATED, new UserCreatedEvent(['user' => $userObject]));
 
         return $userObject;
+    }
+
+    public function loginUser($email, $password, $username = NULL)
+    {
+        $user = VendorUserObject::find()->andWhere(['or', ['username' => $username], ['email' => $email]])->one();
+
+        if (empty($user) || !$user->validatePassword($password)) {
+            throw new UserLoginException("Wrong username or password");
+        }
+        /** @var VendorUserIdentity $identityClass */
+        $identityClass = \Yii::$app->user->identityClass;
+        $identity = $identityClass::findIdentity($user->id);
+
+        return $identity;
     }
 }

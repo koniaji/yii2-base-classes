@@ -9,11 +9,11 @@
 namespace Zvinger\BaseClasses\app\models\work\user\token\bearer;
 
 use Zvinger\BaseClasses\app\models\db\user\token\bearer\DBUserBearerTokenObject;
-use Zvinger\BaseClasses\app\models\work\user\object\UserObject;
+use Zvinger\BaseClasses\app\models\work\user\object\VendorUserObject;
 use yii\behaviors\TimestampBehavior;
 
 /**
- * @property UserObject $user
+ * @property VendorUserObject $user
  */
 class UserBearerTokenObject extends DBUserBearerTokenObject
 {

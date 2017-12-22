@@ -10,7 +10,7 @@ namespace Zvinger\BaseClasses\app\models\work\user\object;
 
 use yii\db\ActiveQuery;
 
-class UserQuery extends ActiveQuery
+class VendorUserQuery extends ActiveQuery
 {
     public function byToken($token)
     {
@@ -19,7 +19,7 @@ class UserQuery extends ActiveQuery
 
     /**
      * @param null $db
-     * @return UserObject
+     * @return VendorUserObject
      */
     public function one($db = NULL)
     {
@@ -28,7 +28,7 @@ class UserQuery extends ActiveQuery
 
     /**
      * @param null $db
-     * @return UserObject[]
+     * @return VendorUserObject[]
      */
     public function all($db = NULL)
     {

@@ -21,7 +21,7 @@ use yii\behaviors\TimestampBehavior;
  *
  * @property string password
  */
-class UserObject extends DBUserObject
+class VendorUserObject extends DBUserObject
 {
     public function behaviors()
     {
@@ -90,10 +90,10 @@ class UserObject extends DBUserObject
 
 
     /**
-     * @return UserQuery
+     * @return VendorUserQuery
      */
     public static function find()
     {
-        return new UserQuery(get_called_class());
+        return new VendorUserQuery(get_called_class());
     }
 }

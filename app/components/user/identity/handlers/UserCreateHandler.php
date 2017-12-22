@@ -10,7 +10,7 @@ namespace Zvinger\BaseClasses\app\components\user\identity\handlers;
 
 use Zvinger\BaseClasses\app\components\user\exceptions\UserCreateException;
 use Zvinger\BaseClasses\app\helpers\error\ErrorMessageHelper;
-use app\models\work\user\object\UserObject;
+use app\models\work\user\object\VendorUserObject;
 use yii\base\BaseObject;
 
 class UserCreateHandler extends BaseObject
@@ -57,7 +57,7 @@ class UserCreateHandler extends BaseObject
     /**
      * @throws \Exception
      *
-     * @return UserObject
+     * @return VendorUserObject
      */
     public function createUser()
     {
@@ -65,7 +65,7 @@ class UserCreateHandler extends BaseObject
             throw new \Exception("No full data for creating user");
         }
         $this->_username = $this->_username ?: $this->_email;
-        $user = new UserObject();
+        $user = new VendorUserObject();
         $user->username = $this->_username;
         $user->email = $this->_email;
         $user->password = $this->_password;
