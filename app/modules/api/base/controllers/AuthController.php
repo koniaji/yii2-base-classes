@@ -10,7 +10,7 @@ namespace Zvinger\BaseClasses\app\modules\api\base\controllers;
 
 use app\components\user\identity\UserIdentity;
 use \Zvinger\BaseClasses\app\components\user\token\UserTokenHandler;
-use app\models\work\user\object\VendorUserObject;
+use app\models\work\user\object\UserObject;
 use Zvinger\BaseClasses\app\modules\api\base\responses\auth\BaseAuthLoginResponse;
 use yii\web\UnauthorizedHttpException;
 use Zvinger\BaseClasses\api\controllers\BaseApiController;
@@ -50,7 +50,7 @@ class AuthController extends BaseApiController
     {
         $username = $this->checkAndGet('username');
         $password = $this->checkAndGet('password');
-        $user = VendorUserObject::find()->andWhere(['or', ['username' => $username], ['email' => $username]])->one();
+        $user = UserObject::find()->andWhere(['or', ['username' => $username], ['email' => $username]])->one();
 
         if (!$user->validatePassword($password)) {
             throw new UnauthorizedHttpException("Wrong username or password");

@@ -9,9 +9,10 @@
 namespace Zvinger\BaseClasses\app\components\user;
 
 use app\components\user\identity\UserIdentity;
-use app\models\work\user\object\VendorUserObject;
+use app\models\work\user\object\UserObject;
 use Zvinger\BaseClasses\app\components\user\events\UserCreatedEvent;
 use Zvinger\BaseClasses\app\components\user\exceptions\UserLoginException;
+use Zvinger\BaseClasses\app\components\user\identity\handlers\UserActivateHandler;
 use Zvinger\BaseClasses\app\components\user\identity\handlers\UserCreateHandler;
 use yii\base\BaseObject;
 use yii\base\Component;
@@ -21,6 +22,18 @@ class VendorUserHandlerComponent extends Component
 {
     const EVENT_USER_CREATED = 'event_user_created';
 
+    /**
+     * @var string|UserObject
+     */
+    public $userObjectClass = UserObject::class;
+
+    /**
+     * @param $email
+     * @param $password
+     * @param null $username
+     * @return UserObject
+     * @throws \Exception
+     */
     public function createUser($email, $password, $username = NULL)
     {
         $handler = new UserCreateHandler();
@@ -36,9 +49,17 @@ class VendorUserHandlerComponent extends Component
         return $userObject;
     }
 
+    /**
+     * @param $email
+     * @param $password
+     * @param null $username
+     * @return null|\yii\web\IdentityInterface|static
+     * @throws UserLoginException
+     * @throws \yii\base\Exception
+     */
     public function loginUser($email, $password, $username = NULL)
     {
-        $user = VendorUserObject::find()->andWhere(['or', ['username' => $username], ['email' => $email]])->one();
+        $user = UserObject::find()->andWhere(['or', ['username' => $username], ['email' => $email]])->one();
 
         if (empty($user) || !$user->validatePassword($password)) {
             throw new UserLoginException("Wrong username or password");
@@ -48,5 +69,19 @@ class VendorUserHandlerComponent extends Component
         $identity = $identityClass::findIdentity($user->id);
 
         return $identity;
+    }
+
+    /**
+     * @param $user_id
+     * @param $code
+     * @param string $activation_type
+     * @throws \Exception
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function activateUser($user_id, $code, $activation_type = 'default')
+    {
+        $handler = new UserActivateHandler();
+        $handler->setUserId($user_id);
+        $handler->activate($code, $activation_type);
     }
 }

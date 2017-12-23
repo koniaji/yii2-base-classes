@@ -17,7 +17,7 @@ class FunctionsHelpers
      * @param bool $overDebug
      * @return bool
      */
-    public static function DebugObject($var = FALSE, $showHtml = FALSE, $showFrom = TRUE, $overDebug = FALSE)
+    public static function DebugObject($var = FALSE, $showHtml = FALSE, $showFrom = TRUE, $overDebug = FALSE, $calledFrom = null)
     {
         $PROJECT_DEBUG = YII_DEBUG || YII_ENV_TEST;
         $IS_CONSOLE = (php_sapi_name() == 'cli') ? TRUE : FALSE;
@@ -30,7 +30,7 @@ class FunctionsHelpers
             echo "::::DEBUG:::: ";
         }
         if ($showFrom) {
-            $calledFrom = debug_backtrace();
+            $calledFrom = $calledFrom ?: debug_backtrace();
             if (!$IS_CONSOLE) {
                 echo '<strong>';
             }

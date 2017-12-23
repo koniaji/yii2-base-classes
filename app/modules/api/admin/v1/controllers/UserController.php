@@ -9,7 +9,7 @@
 namespace Zvinger\BaseClasses\app\modules\api\admin\v1\controllers;
 
 use Zvinger\BaseClasses\app\helpers\error\ErrorMessageHelper;
-use app\models\work\user\object\VendorUserObject;
+use app\models\work\user\object\UserObject;
 use yii\filters\auth\HttpBearerAuth;
 use yii\rest\OptionsAction;
 use yii\web\BadRequestHttpException;
@@ -42,12 +42,12 @@ class UserController extends BaseApiController
 
     public function actionIndex()
     {
-        return VendorUserObject::find()->all();
+        return UserObject::find()->all();
     }
 
     public function actionView($id)
     {
-        return VendorUserObject::findOne($id);
+        return UserObject::findOne($id);
     }
 
     /**
@@ -57,7 +57,7 @@ class UserController extends BaseApiController
      */
     public function actionUpdate($id)
     {
-        $user = VendorUserObject::findOne($id);
+        $user = UserObject::findOne($id);
         $user->load(\Yii::$app->request->post(), '');
         if (!$user->save()) {
             throw new BadRequestHttpException(new ErrorMessageHelper($user));

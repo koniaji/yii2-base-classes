@@ -8,14 +8,14 @@
 
 namespace Zvinger\BaseClasses\app\components\user\identity;
 
-use app\models\work\user\object\VendorUserObject;
+use app\models\work\user\object\UserObject;
 use yii\base\BaseObject;
 use yii\web\IdentityInterface;
 
 class VendorUserIdentity extends BaseObject implements IdentityInterface
 {
     /**
-     * @var VendorUserObject
+     * @var UserObject
      */
     private $_user_object;
 
@@ -44,7 +44,7 @@ class VendorUserIdentity extends BaseObject implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = NULL)
     {
-        $object = VendorUserObject::find()->byToken($token)->one();
+        $object = UserObject::find()->byToken($token)->one();
         $identity = NULL;
         if (!empty($object)) {
             $identity = new static;
@@ -107,21 +107,21 @@ class VendorUserIdentity extends BaseObject implements IdentityInterface
     }
 
     /**
-     * @return VendorUserObject
+     * @return UserObject
      */
     public function getUserObject()
     {
         if (empty($this->_user_object)) {
-            $this->_user_object = VendorUserObject::findOne($this->_user_id);
+            $this->_user_object = UserObject::findOne($this->_user_id);
         }
 
         return $this->_user_object;
     }
 
     /**
-     * @param VendorUserObject $user_object
+     * @param UserObject $user_object
      */
-    public function setUserObject(VendorUserObject $user_object): void
+    public function setUserObject(UserObject $user_object): void
     {
         $this->_user_object = $user_object;
     }

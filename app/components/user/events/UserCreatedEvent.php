@@ -9,9 +9,13 @@
 namespace Zvinger\BaseClasses\app\components\user\events;
 
 use yii\base\Event;
+use Zvinger\BaseClasses\app\models\work\user\object\VendorUserObject;
 
 class UserCreatedEvent extends Event
 {
+    /**
+     * @var VendorUserObject
+     */
     public $user;
 
 

@@ -12,6 +12,7 @@ use Zvinger\BaseClasses\app\components\user\identity\attributes\status\SingleUse
 use Zvinger\BaseClasses\app\components\user\identity\attributes\status\StatusHandler;
 use Zvinger\BaseClasses\app\components\user\identity\attributes\status\UserStatusAttribute;
 use Zvinger\BaseClasses\app\models\db\user\object\DBUserObject;
+use Zvinger\BaseClasses\app\models\work\user\activation\VendorUserActivationObject;
 use Zvinger\BaseClasses\app\models\work\user\token\bearer\UserBearerTokenObject;
 use yii\behaviors\TimestampBehavior;
 
@@ -23,6 +24,8 @@ use yii\behaviors\TimestampBehavior;
  */
 class VendorUserObject extends DBUserObject
 {
+    const EVENT_ACTIVATION_UPDATED = 'event_activation_updated';
+
     public function behaviors()
     {
         return [
@@ -95,5 +98,12 @@ class VendorUserObject extends DBUserObject
     public static function find()
     {
         return new VendorUserQuery(get_called_class());
+    }
+
+    public function getUserActivations()
+    {
+        return $this->hasMany(VendorUserActivationObject::class, [
+            'user_id' => 'id',
+        ]);
     }
 }

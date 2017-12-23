@@ -31,5 +31,12 @@ class ModelsGeneratorActions
             'generateRelations' => 'none',
             'tablesNamespaces'  => $nameSpaces,
         ]);
+        \Yii::$app->runAction('gii/model', [
+            'tableName'         => 'user_activation',
+            'modelClass'        => 'DBUserActivationObject',
+            'ns'                => 'Zvinger\BaseClasses\app\models\db\user\activation',
+            'generateRelations' => 'none',
+            'tablesNamespaces'  => $nameSpaces,
+        ]);
     }
 }
