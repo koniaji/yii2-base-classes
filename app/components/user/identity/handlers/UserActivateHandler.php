@@ -9,6 +9,7 @@
 namespace Zvinger\BaseClasses\app\components\user\identity\handlers;
 
 use yii\base\Event;
+use Zvinger\BaseClasses\app\components\user\exceptions\WrongActivationCodeException;
 use Zvinger\BaseClasses\app\components\user\identity\events\EventActivationUpdated;
 use Zvinger\BaseClasses\app\models\work\user\activation\VendorUserActivationObject;
 use Zvinger\BaseClasses\app\models\work\user\object\VendorUserObject;
@@ -27,13 +28,20 @@ class UserActivateHandler extends BaseUserHandler
     public function activate($code, $activation_type)
     {
         $object = $this->getActivationObject($activation_type);
-        if (empty($object) || !\Yii::$app->security->compareString($this->createHash($code), $object->activation_hash)) {
-            return FALSE;
+        if (empty($object)) {
+            throw new \Exception("Empty activation object: " . print_r([
+                    'user_id' => $this->getUserId(),
+                    'type'    => $activation_type,
+                ]));
+        }
+
+        if (!\Yii::$app->security->compareString($this->createHash($code), $object->activation_hash)) {
+            throw new WrongActivationCodeException();
         }
 
         $object->active = 1;
         $object->save();
-        Event::trigger(VendorUserObject::EVENT_ACTIVATION_UPDATED, new EventActivationUpdated(['userObject' => $this->getUserObject()]));
+        Event::trigger(VendorUserObject::class, VendorUserObject::EVENT_ACTIVATION_UPDATED, new EventActivationUpdated(['userObject' => $this->getUserObject()]));
 
         return TRUE;
     }
@@ -51,12 +59,16 @@ class UserActivateHandler extends BaseUserHandler
     public function createActivationObject($activation_type)
     {
         $code = $this->createCode();
-        $object = new VendorUserActivationObject([
-            'activation_type' => $activation_type,
-            'user_id'         => $this->getUserId(),
-            'activation_hash' => $this->createHash($code),
-            'active'          => 0,
-        ]);
+        $hash = $this->createHash($code);
+        $object = $this->getActivationObject($activation_type);
+        if (empty($object)) {
+            $object = new VendorUserActivationObject([
+                'activation_type' => $activation_type,
+                'user_id'         => $this->getUserId(),
+                'active'          => 0,
+            ]);
+        }
+        $object->activation_hash = $hash;
         $object->tempCode = $code;
         $object->save();
 
