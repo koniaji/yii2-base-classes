@@ -22,6 +22,10 @@ class ModelGenerator extends Generator
         parent::init();
     }
 
+    public function formView()
+    {
+        return \Yii::getAlias("@yii/gii/generators/model/form.php");
+    }
 
     protected function generateClassName($tableName, $useSchemaName = NULL)
     {
