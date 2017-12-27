@@ -46,7 +46,7 @@ class UserActivateHandler extends BaseUserHandler
         return TRUE;
     }
 
-    private function getActivationObject($activation_type)
+    public function getActivationObject($activation_type)
     {
         return VendorUserActivationObject::find()->byUser($this->getUserId())->byType($activation_type)->one();
     }

@@ -58,7 +58,7 @@ class UserCreateHandler extends BaseObject
 
     /**
      * @throws \Exception
-     *
+     * @throws UserCreateException
      * @return UserObject
      */
     public function createUser()

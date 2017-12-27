@@ -12,6 +12,7 @@ use yii\base\BaseObject;
 use yii\base\InvalidConfigException;
 use yii\di\ServiceLocator;
 use yii\swiftmailer\Mailer;
+use Zvinger\BaseClasses\app\components\email\components\ZvingerMailer;
 use Zvinger\BaseClasses\app\components\email\exceptions\EmailComponentException;
 use Zvinger\BaseClasses\app\components\email\models\SendData;
 
@@ -29,7 +30,7 @@ class EmailComponent extends BaseObject
 
     /**
      * @param $type
-     * @return Mailer
+     * @return ZvingerMailer|Mailer
      * @throws EmailComponentException
      */
     public function getMailer($type)
@@ -69,12 +70,18 @@ class EmailComponent extends BaseObject
         if (empty($mailerType)) {
             $mailerType = $this->defaulMailer;
         }
+
         $mailer = $this->getMailer($mailerType);
+        if (empty($data->from)) {
+            $data->from = $mailer->defaultFrom;
+        }
         $message = $mailer
             ->compose()
-            ->setFrom($data->from)
             ->setTo($data->to)
             ->setSubject($data->subject);
+        if ($data->from) {
+            $message->setFrom($data->from);
+        }
         if ($data->isHtml) {
             $message->setHtmlBody($data->body);
         } else {

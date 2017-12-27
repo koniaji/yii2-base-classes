@@ -11,6 +11,7 @@ namespace Zvinger\BaseClasses\app\components\user;
 use app\components\user\identity\UserIdentity;
 use app\models\work\user\object\UserObject;
 use Zvinger\BaseClasses\app\components\user\events\UserCreatedEvent;
+use Zvinger\BaseClasses\app\components\user\exceptions\UserCreateException;
 use Zvinger\BaseClasses\app\components\user\exceptions\UserLoginException;
 use Zvinger\BaseClasses\app\components\user\identity\handlers\UserActivateHandler;
 use Zvinger\BaseClasses\app\components\user\identity\handlers\UserCreateHandler;
@@ -33,6 +34,7 @@ class VendorUserHandlerComponent extends Component
      * @param null $username
      * @return UserObject
      * @throws \Exception
+     * @throws UserCreateException
      */
     public function createUser($email, $password, $username = NULL)
     {
