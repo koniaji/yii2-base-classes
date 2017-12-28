@@ -11,6 +11,7 @@ namespace Zvinger\BaseClasses\app\models\work\user\object;
 use Zvinger\BaseClasses\app\components\user\identity\attributes\status\SingleUserStatus;
 use Zvinger\BaseClasses\app\components\user\identity\attributes\status\StatusHandler;
 use Zvinger\BaseClasses\app\components\user\identity\attributes\status\UserStatusAttribute;
+use Zvinger\BaseClasses\app\components\user\info\VendorUserMiscInfoService;
 use Zvinger\BaseClasses\app\models\db\user\object\DBUserObject;
 use Zvinger\BaseClasses\app\models\work\user\activation\VendorUserActivationObject;
 use Zvinger\BaseClasses\app\models\work\user\token\bearer\UserBearerTokenObject;
@@ -21,6 +22,7 @@ use yii\behaviors\TimestampBehavior;
  * @package Zvinger\BaseClasses\app\models\work\user\object
  *
  * @property string password
+ * @property VendorUserMiscInfoService miscInfo
  */
 class VendorUserObject extends DBUserObject
 {
@@ -105,5 +107,24 @@ class VendorUserObject extends DBUserObject
         return $this->hasMany(VendorUserActivationObject::class, [
             'user_id' => 'id',
         ]);
+    }
+
+    /**
+     * @var VendorUserMiscInfoService
+     */
+    private $_misc_info_service;
+
+    protected $_misc_info_service_class = VendorUserMiscInfoService::class;
+
+    /**
+     * @return VendorUserMiscInfoService
+     */
+    public function getMiscInfo()
+    {
+        if (empty($this->_misc_info_service)) {
+            $this->_misc_info_service = new $this->_misc_info_service_class($this->id);
+        }
+
+        return $this->_misc_info_service;
     }
 }

@@ -18,6 +18,7 @@ use Zvinger\BaseClasses\app\components\user\identity\handlers\UserCreateHandler;
 use yii\base\BaseObject;
 use yii\base\Component;
 use Zvinger\BaseClasses\app\components\user\identity\VendorUserIdentity;
+use Zvinger\BaseClasses\app\components\user\info\VendorUserMiscInfoService;
 
 class VendorUserHandlerComponent extends Component
 {
@@ -85,5 +86,37 @@ class VendorUserHandlerComponent extends Component
         $handler = new UserActivateHandler();
         $handler->setUserId($user_id);
         $handler->activate($code, $activation_type);
+    }
+
+    /**
+     * @param $user_id
+     * @return VendorUserMiscInfoService
+     */
+
+    private $_user_misc_info_services = [];
+
+    /**
+     * @param $user_id
+     * @return VendorUserMiscInfoService
+     */
+    public function getUserMiscInfo($user_id)
+    {
+        if (empty($this->_user_misc_info_services[$user_id])) {
+            $userObject = $this->getUserObject($user_id);
+            $this->_user_misc_info_services[$user_id] = $userObject->miscInfo;
+        }
+
+        return $this->_user_misc_info_services[$user_id];
+    }
+
+    private $_user_objects = [];
+
+    public function getUserObject($user_id)
+    {
+        if (empty($this->_user_objects[$user_id])) {
+            $this->_user_objects[$user_id] = $this->userObjectClass::findOne($user_id);
+        }
+
+        return $this->_user_objects[$user_id];
     }
 }
