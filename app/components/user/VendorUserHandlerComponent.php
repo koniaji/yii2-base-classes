@@ -18,7 +18,8 @@ use Zvinger\BaseClasses\app\components\user\identity\handlers\UserCreateHandler;
 use yii\base\BaseObject;
 use yii\base\Component;
 use Zvinger\BaseClasses\app\components\user\identity\VendorUserIdentity;
-use Zvinger\BaseClasses\app\components\user\info\VendorUserMiscInfoService;
+use Zvinger\BaseClasses\app\components\data\miscInfo\VendorUserMiscInfoService;
+use Zvinger\BaseClasses\app\models\work\user\object\VendorUserObject;
 
 class VendorUserHandlerComponent extends Component
 {
@@ -111,6 +112,10 @@ class VendorUserHandlerComponent extends Component
 
     private $_user_objects = [];
 
+    /**
+     * @param $user_id
+     * @return VendorUserObject
+     */
     public function getUserObject($user_id)
     {
         if (empty($this->_user_objects[$user_id])) {

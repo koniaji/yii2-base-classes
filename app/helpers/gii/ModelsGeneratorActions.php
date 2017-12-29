@@ -8,15 +8,21 @@
 
 namespace Zvinger\BaseClasses\app\helpers\gii;
 
+use Zvinger\Auth\Mobsolutions\models\user\token\UserMobsolutionTokenObject;
+use Zvinger\BaseClasses\app\models\work\user\object\VendorUserObject;
+use Zvinger\BaseClasses\app\models\work\user\token\bearer\UserBearerTokenObject;
+
 class ModelsGeneratorActions
 {
+    public static $globalNameSpaces = [
+        'user'              => VendorUserObject::class,
+        'user_bearer_token' => UserBearerTokenObject::class,
+        'user_mobsol_token' => UserMobsolutionTokenObject::class,
+    ];
+
     public static function generateUserModels()
     {
-        $nameSpaces = [
-            'user'              => \Zvinger\BaseClasses\app\models\work\user\object\VendorUserObject::class,
-            'user_bearer_token' => \Zvinger\BaseClasses\app\models\work\user\token\bearer\UserBearerTokenObject::class,
-            'user_mobsol_token' => \Zvinger\Auth\Mobsolutions\models\user\token\UserMobsolutionTokenObject::class,
-        ];
+        $nameSpaces = static::$globalNameSpaces;
         \Yii::$app->runAction('gii/model', [
             'tableName'         => 'user',
             'modelClass'        => 'DBUserObject',

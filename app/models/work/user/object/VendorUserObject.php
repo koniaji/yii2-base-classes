@@ -11,7 +11,7 @@ namespace Zvinger\BaseClasses\app\models\work\user\object;
 use Zvinger\BaseClasses\app\components\user\identity\attributes\status\SingleUserStatus;
 use Zvinger\BaseClasses\app\components\user\identity\attributes\status\StatusHandler;
 use Zvinger\BaseClasses\app\components\user\identity\attributes\status\UserStatusAttribute;
-use Zvinger\BaseClasses\app\components\user\info\VendorUserMiscInfoService;
+use Zvinger\BaseClasses\app\components\data\miscInfo\VendorUserMiscInfoService;
 use Zvinger\BaseClasses\app\models\db\user\object\DBUserObject;
 use Zvinger\BaseClasses\app\models\work\user\activation\VendorUserActivationObject;
 use Zvinger\BaseClasses\app\models\work\user\token\bearer\UserBearerTokenObject;
@@ -122,7 +122,7 @@ class VendorUserObject extends DBUserObject
     public function getMiscInfo()
     {
         if (empty($this->_misc_info_service)) {
-            $this->_misc_info_service = new $this->_misc_info_service_class($this->id);
+            $this->_misc_info_service = new $this->_misc_info_service_class($this->id, 'user');
         }
 
         return $this->_misc_info_service;

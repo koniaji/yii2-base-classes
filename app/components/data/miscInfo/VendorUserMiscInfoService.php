@@ -6,13 +6,13 @@
  * Time: 12:01
  */
 
-namespace Zvinger\BaseClasses\app\components\user\info;
+namespace Zvinger\BaseClasses\app\components\data\miscInfo;
 
 use yii\base\BaseObject;
 use yii\base\InvalidCallException;
 use yii\base\UnknownPropertyException;
 use yii\helpers\Json;
-use Zvinger\BaseClasses\app\components\user\info\models\UserMiscInfoObject;
+use Zvinger\BaseClasses\app\components\data\miscInfo\models\BaseVendorMiscInfoObject;
 use Zvinger\BaseClasses\app\exceptions\model\ModelValidateException;
 
 /**
@@ -23,16 +23,25 @@ use Zvinger\BaseClasses\app\exceptions\model\ModelValidateException;
  */
 class VendorUserMiscInfoService extends BaseObject
 {
-    private $_user_id;
+    private $_object_id;
+
+    protected $_object_type;
 
     /**
      * UserMiscInfoService constructor.
-     * @param $_userId
+     * @param $object_id
+     * @param $object_type
      * @param array $params
      */
-    public function __construct($_userId, $params = [])
+    public function __construct($object_id, $object_type = NULL, $params = [])
     {
-        $this->_user_id = $_userId;
+        if ($object_type === NULL && empty($this->_object_type)) {
+            throw new \InvalidArgumentException("No object type given");
+        }
+        if (!empty($object_type)) {
+            $this->_object_type = $object_type;
+        }
+        $this->_object_id = $object_id;
         parent::__construct($params);
     }
 
@@ -44,7 +53,7 @@ class VendorUserMiscInfoService extends BaseObject
      */
     public function __get($name)
     {
-        $keyedData = $this->getUserDataByKey($name);
+        $keyedData = $this->getObjectDataByKey($name);
         if ($keyedData === FALSE) {
             return parent::__get($name);
         }
@@ -62,13 +71,13 @@ class VendorUserMiscInfoService extends BaseObject
         try {
             parent::__set($name, $value);
         } catch (UnknownPropertyException $e) {
-            $this->setUserDataByKey($name, $value);
+            $this->setObjectDataByKey($name, $value);
         } catch (InvalidCallException $e) {
-            $this->setUserDataByKey($name, $value);
+            $this->setObjectDataByKey($name, $value);
         }
     }
 
-    private function getUserDataByKey($key)
+    private function getObjectDataByKey($key)
     {
         $object = $this->getCurrentInfoObject($key);
         if (empty($object)) {
@@ -88,13 +97,14 @@ class VendorUserMiscInfoService extends BaseObject
      * @param $value
      * @throws ModelValidateException
      */
-    private function setUserDataByKey($key, $value)
+    private function setObjectDataByKey($key, $value)
     {
         $object = $this->getCurrentInfoObject($key);
         if (empty($object)) {
-            $object = new UserMiscInfoObject([
-                'user_id' => $this->_user_id,
-                'key'     => $key,
+            $object = new BaseVendorMiscInfoObject([
+                'object_id'   => $this->_object_id,
+                'object_type' => $this->_object_type,
+                'key'         => $key,
             ]);
         }
         $object->json = FALSE;
@@ -122,11 +132,15 @@ class VendorUserMiscInfoService extends BaseObject
 
     /**
      * @param $key
-     * @return UserMiscInfoObject
+     * @return BaseVendorMiscInfoObject
      */
     private function getCurrentInfoObject($key)
     {
-        $object = UserMiscInfoObject::find()->byUser($this->_user_id)->byKey($key)->one();
+        $object = BaseVendorMiscInfoObject::find()
+            ->byObject($this->_object_id)
+            ->byType($this->_object_type)
+            ->byKey($key)
+            ->one();
 
         return $object;
     }
