@@ -144,4 +144,15 @@ class VendorUserMiscInfoService extends BaseObject
 
         return $object;
     }
+
+    public function getNoCheck($key, $default = NULL)
+    {
+        try {
+            $value = $this->{$key};
+        } catch (UnknownPropertyException $e) {
+            $value = $default;
+        }
+
+        return $value;
+    }
 }
