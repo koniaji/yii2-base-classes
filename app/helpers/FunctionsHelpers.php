@@ -17,7 +17,7 @@ class FunctionsHelpers
      * @param bool $overDebug
      * @return bool
      */
-    public static function DebugObject($var = FALSE, $showHtml = FALSE, $showFrom = TRUE, $overDebug = FALSE, $calledFrom = null)
+    public static function DebugObject($var = FALSE, $showHtml = FALSE, $showFrom = TRUE, $overDebug = FALSE, $calledFrom = NULL)
     {
         $PROJECT_DEBUG = YII_DEBUG || YII_ENV_TEST;
         $IS_CONSOLE = (php_sapi_name() == 'cli') ? TRUE : FALSE;
@@ -95,5 +95,19 @@ class FunctionsHelpers
         $tmp = mb_substr($str, 0, $length, $encoding);
 
         return strip_tags(mb_substr($tmp, 0, mb_strripos($tmp, ' ', 0, $encoding), $encoding) . $postfix);
+    }
+
+    public static function checkKeyedData($data, array $keys)
+    {
+        $result = TRUE;
+        $array = (array)$data;
+        foreach ($keys as $key) {
+            if (!isset($array[$key])) {
+                $result = $key;
+                break;
+            }
+        }
+
+        return $result;
     }
 }
