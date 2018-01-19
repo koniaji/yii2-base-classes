@@ -19,11 +19,16 @@ use yii\base\BaseObject;
 use yii\base\Component;
 use Zvinger\BaseClasses\app\components\user\identity\VendorUserIdentity;
 use Zvinger\BaseClasses\app\components\data\miscInfo\VendorUserMiscInfoService;
+use Zvinger\BaseClasses\app\models\db\user\object\DBUserObject;
 use Zvinger\BaseClasses\app\models\work\user\object\VendorUserObject;
 
 class VendorUserHandlerComponent extends Component
 {
     const EVENT_USER_CREATED = 'event_user_created';
+
+    public $onlineSeconds = 3 * MINUTE;
+
+    public $onlineAttribute = 'logged_at';
 
     /**
      * @var string|UserObject
@@ -93,7 +98,6 @@ class VendorUserHandlerComponent extends Component
      * @param $user_id
      * @return VendorUserMiscInfoService
      */
-
     private $_user_misc_info_services = [];
 
     /**
@@ -123,5 +127,19 @@ class VendorUserHandlerComponent extends Component
         }
 
         return $this->_user_objects[$user_id];
+    }
+
+    public function isOnline($user_id)
+    {
+        return (time() - DBUserObject::find()->select('logged_at')->where(['id' => $user_id])->scalar()) < $this->onlineSeconds;
+    }
+
+    public function updateOnline($user_id)
+    {
+        DBUserObject::updateAll([
+            $this->onlineAttribute => time(),
+        ], [
+            'id' => $user_id,
+        ]);
     }
 }

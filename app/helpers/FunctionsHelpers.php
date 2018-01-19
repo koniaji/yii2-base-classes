@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zvinger
- * Date: 22.12.17
- * Time: 11:14
- */
-
 namespace Zvinger\BaseClasses\app\helpers;
 
 class FunctionsHelpers
