@@ -23,7 +23,7 @@ class M171229082027BaseMiscInfo extends Migration
         $this->renameTable($oldTableName, $newTableName);
         $this->addColumn($newTableName, 'object_type', 'varchar(255)');
         $this->createIndex('INDEX_user_misc_info_user_id', $newTableName, ['object_type', 'object_id', 'key']);
-        $this->alterColumn($newTableName, 'object_type', 'INT(11) after id');
+        $this->alterColumn($newTableName, 'object_type', 'varchar(100) after id');
         $this->update($newTableName, ['object_type' => 'user']);
     }
 
