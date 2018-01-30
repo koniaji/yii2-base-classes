@@ -3,6 +3,7 @@
 namespace Zvinger\BaseClasses\app\modules\fileStorage;
 
 use Zvinger\BaseClasses\app\modules\fileStorage\components\storage\storages\trntv\TerentevFileStorage;
+use Zvinger\BaseClasses\app\modules\fileStorage\components\storage\storages\url\UrlFileStorage;
 use Zvinger\BaseClasses\app\modules\fileStorage\components\storage\VendorFileStorageComponent;
 
 /**
@@ -36,6 +37,9 @@ class VendorFileStorageModule extends \yii\base\Module
                             'path'  => '@webroot/storage/source/default',
                         ],
                     ],
+                ],
+                'url'     => [
+                    'class' => UrlFileStorage::class,
                 ],
             ];
             if ($this->componentsSettings === FALSE) {
