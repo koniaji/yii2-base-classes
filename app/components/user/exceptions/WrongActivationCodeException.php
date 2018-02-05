@@ -10,8 +10,9 @@ namespace Zvinger\BaseClasses\app\components\user\exceptions;
 
 use Throwable;
 use yii\base\Exception;
+use yii\base\UserException;
 
-class WrongActivationCodeException extends Exception
+class WrongActivationCodeException extends UserException
 {
     public function __construct(string $message = "", int $code = 0, Throwable $previous = NULL)
     {
