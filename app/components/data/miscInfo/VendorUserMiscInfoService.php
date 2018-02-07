@@ -23,6 +23,8 @@ use Zvinger\BaseClasses\app\exceptions\model\ModelValidateException;
  */
 class VendorUserMiscInfoService extends BaseObject
 {
+    public $defaultFieldValues = [];
+
     private $_object_id;
 
     protected $_object_type;
@@ -49,16 +51,24 @@ class VendorUserMiscInfoService extends BaseObject
     /**
      * @param string $name
      * @return bool|mixed
-     * @throws \yii\base\UnknownPropertyException
+     * @throws UnknownPropertyException
      */
     public function __get($name)
     {
-        $keyedData = $this->getObjectDataByKey($name);
-        if ($keyedData === FALSE) {
-            return parent::__get($name);
+        $value = $this->getObjectDataByKey($name);
+        if ($value === FALSE) {
+            try {
+                $value = parent::__get($name);
+            } catch (UnknownPropertyException $e) {
+                if (key_exists($name, $this->defaultFieldValues)) {
+                    $value = $this->defaultFieldValues[$name];
+                } else {
+                    throw $e;
+                }
+            }
         }
 
-        return $keyedData;
+        return $value;
     }
 
     /**
@@ -77,7 +87,7 @@ class VendorUserMiscInfoService extends BaseObject
         }
     }
 
-    private function getObjectDataByKey($key)
+    protected function getObjectDataByKey($key)
     {
         $object = $this->getCurrentInfoObject($key);
         if (empty($object)) {
@@ -145,6 +155,12 @@ class VendorUserMiscInfoService extends BaseObject
         return $object;
     }
 
+    /**
+     * @param $key
+     * @param null $default
+     * @return bool|mixed|null
+     * @deprecated use $defaultFieldValues for default values
+     */
     public function getNoCheck($key, $default = NULL)
     {
         try {
