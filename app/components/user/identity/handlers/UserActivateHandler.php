@@ -35,7 +35,8 @@ class UserActivateHandler extends BaseUserHandler
                 ]));
         }
 
-        if (!\Yii::$app->security->compareString($this->createHash($code), $object->activation_hash)) {
+        $expected = $this->createHash($code);
+        if (!\Yii::$app->security->compareString($expected, $object->activation_hash)) {
             throw new WrongActivationCodeException();
         }
 
