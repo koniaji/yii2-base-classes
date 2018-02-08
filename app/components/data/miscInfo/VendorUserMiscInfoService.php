@@ -103,6 +103,14 @@ class VendorUserMiscInfoService extends BaseObject
     }
 
     /**
+     * @return null
+     */
+    public function getObjectType()
+    {
+        return $this->_object_type;
+    }
+
+    /**
      * @param $key
      * @param $value
      * @throws ModelValidateException
