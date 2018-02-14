@@ -32,7 +32,7 @@ class VendorFileStorageModule extends \yii\base\Module
                     'class'             => TerentevFileStorage::class,
                     'componentSettings' => [
                         'class'      => '\trntv\filekit\Storage',
-                        'baseUrl'    => '/storage/source/default',
+                        'baseUrl'    => FULL_BASE_URL . '/storage/source/default',
                         'filesystem' => [
                             'class' => '\Zvinger\BaseClasses\app\modules\fileStorage\builder\LocalFlysystemBuilder',
                             'path'  => '@webroot/storage/source/default',

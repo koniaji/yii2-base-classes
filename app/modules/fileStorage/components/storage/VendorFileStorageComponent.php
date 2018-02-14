@@ -83,6 +83,7 @@ class VendorFileStorageComponent extends BaseObject
         $result = new SavedFileModel([
             'component'          => $fileStorageSaveResult->component,
             'fileStorageElement' => $object,
+            'fileStorageComponent' => $this
         ]);
 
         return $result;
