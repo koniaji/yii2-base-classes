@@ -2,58 +2,184 @@
 /**
  * Created by PhpStorm.
  * User: zvinger
- * Date: 23.12.17
- * Time: 9:48
+ * Date: 19.02.18
+ * Time: 15:07
  */
-
 namespace Zvinger\BaseClasses\app\components\keyStorage;
 
-use yii\base\BaseObject;
-use yii2mod\settings\components\Settings;
+use Yii;
+use yii\base\Component;
+use yii\helpers\ArrayHelper;
+use Zvinger\BaseClasses\app\components\keyStorage\models\BaseKeyStorageElement;
 
-class KeyStorageComponent extends BaseObject
+/**
+ * Class KeyStorage
+ * @package common\components\keyStorage
+ */
+class KeyStorageComponent extends Component
 {
-    private $_settingsSection = 'key-storage';
+    /**
+     * @var string
+     */
+    public $cachePrefix = '_keyStorage';
+    /**
+     * @var int
+     */
+    public $cachingDuration = 60;
+    /**
+     * @var string
+     */
+    public $modelClass = '\Zvinger\BaseClasses\app\components\keyStorage\models\KeyStorageItem';
 
-    private $_settingsComponent = 'settings';
+    /**
+     * @var array Runtime values cache
+     */
+    private $values = [];
 
-    public function get($key, $default = NULL)
-    {
-        return $this->getSettingsComponent()->get($this->_settingsSection, $key, $default);
-    }
-
+    /**
+     * @param $key
+     * @param $value mixed
+     * @return mixed
+     */
     public function set($key, $value)
     {
-        return $this->getSettingsComponent()->set($this->_settingsSection, $key, $value);
+        if ($value instanceof BaseKeyStorageElement) {
+            return $value->saveToCache($key);
+        }
+        $model = $this->getModel($key);
+        if (!$model) {
+            $model = new $this->modelClass;
+            $model->key = $key;
+        }
+        $model->value = $value;
+        if ($model->save(false)) {
+            $this->values[$key] = $value;
+            Yii::$app->cache->set($this->getCacheKey($key), $value, $this->cachingDuration);
+            return true;
+        };
+        return false;
     }
 
+    /**
+     * @param array $values
+     */
+    public function setAll(array $values)
+    {
+        foreach ($values as $key => $value) {
+            $this->set($key, $value);
+        }
+    }
+
+    /**
+     * @param $key
+     * @param null $default
+     * @param bool $cache
+     * @param int|bool $cachingDuration
+     * @return mixed|null
+     */
+    public function get($key, $default = null, $cache = true, $cachingDuration = false)
+    {
+        if ($cache) {
+            $cacheKey = $this->getCacheKey($key);
+            $value = ArrayHelper::getValue($this->values, $key, false) ?: Yii::$app->cache->get($cacheKey);
+            if ($value === false) {
+                if ($model = $this->getModel($key)) {
+                    $value = $model->value;
+                    $this->values[$key] = $value;
+                    Yii::$app->cache->set(
+                        $cacheKey,
+                        $value,
+                        $cachingDuration === false ? $this->cachingDuration : $cachingDuration
+                    );
+                } else {
+                    $value = $default;
+                }
+            }
+        } else {
+            $model = $this->getModel($key);
+            $value = $model ? $model->value : $default;
+        }
+        return $value;
+    }
+
+    /**
+     * @param array $keys
+     * @return array
+     */
+    public function getAll(array $keys)
+    {
+        $values = [];
+        foreach ($keys as $key) {
+            $values[$key] = $this->get($key);
+        }
+        return $values;
+    }
+
+    /**
+     * @param $key
+     * @param bool $cache
+     * @return bool
+     */
+    public function has($key, $cache = true)
+    {
+        return $this->get($key, null, $cache) !== null;
+    }
+
+    /**
+     * @param array $keys
+     * @return bool
+     */
+    public function hasAll(array $keys)
+    {
+        foreach ($keys as $key) {
+            if (!$this->has($key)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @param $key
+     * @return bool
+     */
     public function remove($key)
     {
-        return $this->getSettingsComponent()->remove($this->_settingsSection, $key);
+        unset($this->values[$key]);
+        Yii::$app->cache->delete($this->getCacheKey($key));
+        return call_user_func($this->modelClass.'::deleteAll', ['key' => $key]);
     }
 
-    private function getSettingsComponent()
+    /**
+     * @param array $keys
+     */
+    public function removeAll(array $keys)
     {
-        if (!($this->_settingsComponent instanceof Settings)) {
-            $this->_settingsComponent = \Yii::$app->get($this->_settingsComponent);
+        foreach ($keys as $key) {
+            $this->remove($key);
         }
-
-        return $this->_settingsComponent;
     }
 
     /**
-     * @param string $settingsSection
+     * @param $key
+     * @return mixed
      */
-    public function setSettingsSection(string $settingsSection): void
+    protected function getModel($key)
     {
-        $this->_settingsSection = $settingsSection;
+        $query = call_user_func($this->modelClass.'::find');
+        return $query->where(['key'=>$key])->one();
     }
 
     /**
-     * @param mixed $settingsComponent
+     * @param $key
+     * @return array
      */
-    public function setSettingsComponent($settingsComponent): void
+    protected function getCacheKey($key)
     {
-        $this->_settingsComponent = $settingsComponent;
+        return [
+            __CLASS__,
+            $this->cachePrefix,
+            $key
+        ];
     }
 }
