@@ -2,6 +2,7 @@
 
 namespace Zvinger\BaseClasses\app\modules\fileStorage;
 
+use yii\helpers\ArrayHelper;
 use Zvinger\BaseClasses\app\modules\fileStorage\components\storage\storages\trntv\TerentevFileStorage;
 use Zvinger\BaseClasses\app\modules\fileStorage\components\storage\storages\url\UrlFileStorage;
 use Zvinger\BaseClasses\app\modules\fileStorage\components\storage\VendorFileStorageComponent;
@@ -31,7 +32,7 @@ class VendorFileStorageModule extends \yii\base\Module
                     'class'             => TerentevFileStorage::class,
                     'componentSettings' => [
                         'class'      => '\trntv\filekit\Storage',
-                        'baseUrl'    => '/storage/source/default',
+                        'baseUrl'    => FULL_BASE_URL . '/storage/source/default',
                         'filesystem' => [
                             'class' => '\Zvinger\BaseClasses\app\modules\fileStorage\builder\LocalFlysystemBuilder',
                             'path'  => '@webroot/storage/source/default',
@@ -44,6 +45,8 @@ class VendorFileStorageModule extends \yii\base\Module
             ];
             if ($this->componentsSettings === FALSE) {
                 $this->componentsSettings = $defaultComponentsSettings;
+            } else {
+                $this->componentsSettings = ArrayHelper::merge($defaultComponentsSettings, $this->componentsSettings);
             }
             $this->components = [
                 'storage' => [
