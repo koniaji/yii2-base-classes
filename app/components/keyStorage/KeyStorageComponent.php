@@ -44,7 +44,7 @@ class KeyStorageComponent extends Component
     public function set($key, $value)
     {
         if ($value instanceof BaseKeyStorageElement) {
-            return $value->saveToCache($key);
+            return $value->saveToStorage($key);
         }
         $model = $this->getModel($key);
         if (!$model) {

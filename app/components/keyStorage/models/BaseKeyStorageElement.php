@@ -50,15 +50,20 @@ abstract class BaseKeyStorageElement
         return static::getBaseStorageKey() . $key;
     }
 
-    final public function saveToCache($key)
+    final public function saveToStorage($key)
     {
-        return $this->getKeyStorageComponent()->set(static::prepareKey($key), $this->prepareForStorage());
+        return static::getKeyStorageComponent()->set(static::prepareKey($key), $this->prepareForStorage());
+    }
+
+    public static function removeFromStorage($key)
+    {
+        static::getKeyStorageComponent()->remove(static::prepareKey($key));
     }
 
     /**
      * @return mixed|\Zvinger\BaseClasses\app\components\keyStorage\KeyStorageComponent
      */
-    public function getKeyStorageComponent()
+    public static function getKeyStorageComponent()
     {
         return \Yii::$app->keyStorage;
     }
