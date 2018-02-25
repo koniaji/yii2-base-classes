@@ -8,9 +8,32 @@
 
 namespace Zvinger\BaseClasses\app\modules\api\admin;
 
+use yii\filters\auth\HttpBearerAuth;
+use yii\web\Response;
 use Zvinger\BaseClasses\app\modules\api\ApiModule;
 
 class AdminApiModule extends ApiModule
 {
 
+    public function init()
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+        \Yii::$app->user->enableSession = FALSE;
+        if (!\Yii::$app->request->isOptions) {
+            $this->attachBehavior('authenticator', [
+                'class' => HttpBearerAuth::class,
+            ]);
+            $this->attachBehavior('access', [
+                'class' => \yii2mod\rbac\filters\AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => TRUE,
+                        'roles' => ['admin'],
+                    ],
+                ],
+            ]);
+        }
+
+        parent::init();
+    }
 }

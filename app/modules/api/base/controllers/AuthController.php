@@ -55,6 +55,7 @@ class AuthController extends BaseApiController
         if (!$user->validatePassword($password)) {
             throw new UnauthorizedHttpException("Wrong username or password");
         }
+
         $identity = UserIdentity::findIdentity($user->id);
         $handler = new UserTokenHandler($identity->getId());
         $tokenObject = $handler->generateBearerToken();

@@ -14,35 +14,15 @@ use yii\filters\auth\HttpBearerAuth;
 use yii\rest\OptionsAction;
 use yii\web\BadRequestHttpException;
 use Zvinger\BaseClasses\api\controllers\BaseApiController;
+use Zvinger\BaseClasses\app\models\work\user\object\VendorUserObject;
+use Zvinger\BaseClasses\app\modules\api\admin\v1\components\user\models\UserApiAdminV1Model;
+use Zvinger\BaseClasses\app\modules\api\admin\v1\controllers\base\BaseVendorAdminV1Controller;
 
-class UserController extends BaseApiController
+class UserController extends BaseVendorAdminV1Controller
 {
-    public function actions()
-    {
-        return [
-            'options' => [
-                'class' => OptionsAction::class,
-            ],
-        ];
-    }
-
-    public function behaviors()
-    {
-        $old = parent::behaviors();
-        $behaviors = [];
-        $behaviors['authenticator'] = [
-            'class' => HttpBearerAuth::class,
-        ];
-
-        $array_merge = array_merge($old, $behaviors);
-
-        return $array_merge;
-    }
-
-
     public function actionIndex()
     {
-        return UserObject::find()->all();
+        return $this->module->userComponent->convertUserObjectsToModelMultiple(VendorUserObject::find()->all());
     }
 
     public function actionView($id)
@@ -62,6 +42,22 @@ class UserController extends BaseApiController
         if (!$user->save()) {
             throw new BadRequestHttpException(new ErrorMessageHelper($user));
         }
-        return $user;
+
+        return $this->module->userComponent->convertUserObjectToModel($user);
+    }
+
+    /**
+     * @return UserApiAdminV1Model
+     * @throws BadRequestHttpException
+     */
+    public function actionCreate()
+    {
+        $user = new UserObject(\Yii::$app->request->post());
+
+        if (!$user->save()) {
+            throw new BadRequestHttpException(new ErrorMessageHelper($user));
+        }
+
+        return $this->module->userComponent->convertUserObjectToModel($user);
     }
 }

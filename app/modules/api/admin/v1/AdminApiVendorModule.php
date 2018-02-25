@@ -11,7 +11,13 @@ namespace Zvinger\BaseClasses\app\modules\api\admin\v1;
 use Zvinger\BaseClasses\app\modules\api\admin\AdminApiModule;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
+use Zvinger\BaseClasses\app\modules\api\admin\v1\components\user\VendorAdminUserComponent;
 
+/**
+ * Class AdminApiVendorModule
+ * @package Zvinger\BaseClasses\app\modules\api\admin\v1
+ * @property VendorAdminUserComponent $userComponent
+ */
 class AdminApiVendorModule extends AdminApiModule implements BootstrapInterface
 {
 
@@ -22,7 +28,10 @@ class AdminApiVendorModule extends AdminApiModule implements BootstrapInterface
     public function bootstrap($app)
     {
         $app->urlManager->addRules([
-            ['class' => 'yii\rest\UrlRule', 'controller' => $this->uniqueId.'/user'],
+            ['class' => 'yii\rest\UrlRule', 'controller' => $this->uniqueId . '/user'],
         ]);
+        $app->components = [
+            'userComponent' => VendorAdminUserComponent::class,
+        ];
     }
 }
