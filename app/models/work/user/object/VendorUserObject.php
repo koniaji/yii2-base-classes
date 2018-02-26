@@ -123,6 +123,7 @@ class VendorUserObject extends DBUserObject
     {
         if (empty($this->_misc_info_service)) {
             $this->_misc_info_service = new $this->_misc_info_service_class($this->id, 'user');
+            $this->_misc_info_service->setObjectParent($this);
         }
 
         return $this->_misc_info_service;

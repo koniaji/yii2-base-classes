@@ -25,9 +25,11 @@ class VendorUserMiscInfoService extends BaseObject
 {
     public $defaultFieldValues = [];
 
-    private $_object_id;
+    protected $_object_id;
 
     protected $_object_type;
+
+    protected $_object_parent;
 
     /**
      * UserMiscInfoService constructor.
@@ -178,5 +180,15 @@ class VendorUserMiscInfoService extends BaseObject
         }
 
         return $value;
+    }
+
+    public function setObjectParent($object)
+    {
+        $this->_object_parent = $object;
+    }
+
+    protected function getObjectParent()
+    {
+        return $this->_object_parent;
     }
 }
