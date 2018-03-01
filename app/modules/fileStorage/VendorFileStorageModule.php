@@ -18,7 +18,12 @@ class VendorFileStorageModule extends \yii\base\Module
      */
     public $controllerNamespace = 'Zvinger\BaseClasses\app\modules\fileStorage\controllers';
 
+    /**
+     * @var bool|array
+     */
     public $componentsSettings = FALSE;
+
+    public $defaultStorage = 'default';
 
     /**
      * @inheritdoc
@@ -47,6 +52,11 @@ class VendorFileStorageModule extends \yii\base\Module
                 $this->componentsSettings = $defaultComponentsSettings;
             } else {
                 $this->componentsSettings = ArrayHelper::merge($defaultComponentsSettings, $this->componentsSettings);
+            }
+            if ($this->defaultStorage) {
+                if (!empty($this->componentsSettings[$this->defaultStorage])) {
+                    $this->componentsSettings['default'] = $this->componentsSettings[$this->defaultStorage];
+                }
             }
             $this->components = [
                 'storage' => [
