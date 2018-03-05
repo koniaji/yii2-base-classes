@@ -9,6 +9,13 @@ namespace Zvinger\BaseClasses\app\components\data\miscInfo\models;
  */
 class BaseVendorUserMiscInfoQuery extends \yii\db\ActiveQuery
 {
+    private $miscDataFilter = [];
+
+    public function addMiscDataFilter($data)
+    {
+        $this->miscDataFilter[] = $data;
+    }
+
     public function byKey($key)
     {
         return $this->andWhere(['key' => $key]);

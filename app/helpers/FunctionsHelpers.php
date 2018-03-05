@@ -1,4 +1,5 @@
 <?php
+
 namespace Zvinger\BaseClasses\app\helpers;
 
 class FunctionsHelpers
@@ -102,5 +103,24 @@ class FunctionsHelpers
         }
 
         return $result;
+    }
+
+    protected static $_debugData = [];
+
+    public static function saveDebug($data, $key = NULL)
+    {
+        if (is_null($key)) {
+            static::$_debugData[] = $data;
+        } else {
+            if (empty(static::$_debugData[$key])) {
+                static::$_debugData[$key] = [];
+            }
+            static::$_debugData[$key][] = $data;
+        }
+    }
+
+    public static function getDebug()
+    {
+        return static::$_debugData;
     }
 }
