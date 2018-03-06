@@ -129,6 +129,11 @@ class VendorUserHandlerComponent extends Component
         return $this->_user_objects[$user_id];
     }
 
+    public function saveUserObject($userObject)
+    {
+        $this->_user_objects[$userObject->id] = $userObject;
+    }
+
     public function isOnline($user_id)
     {
         return (time() - DBUserObject::find()->select('logged_at')->where(['id' => $user_id])->scalar()) < $this->onlineSeconds;
