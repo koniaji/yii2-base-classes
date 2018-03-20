@@ -19,20 +19,6 @@ class AdminApiModule extends ApiModule
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
         \Yii::$app->user->enableSession = FALSE;
-        if (!\Yii::$app->request->isOptions) {
-            $this->attachBehavior('authenticator', [
-                'class' => HttpBearerAuth::class,
-            ]);
-            $this->attachBehavior('access', [
-                'class' => \yii2mod\rbac\filters\AccessControl::class,
-                'rules' => [
-                    [
-                        'allow' => TRUE,
-                        'roles' => ['admin'],
-                    ],
-                ],
-            ]);
-        }
 
         parent::init();
     }
