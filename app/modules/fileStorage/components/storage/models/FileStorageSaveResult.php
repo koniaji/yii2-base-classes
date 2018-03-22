@@ -13,4 +13,6 @@ class FileStorageSaveResult
     public $path;
 
     public $component;
+
+    public $type;
 }
