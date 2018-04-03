@@ -26,6 +26,8 @@ class EmailComponent extends BaseObject
 
     public $defaulMailer = 'default';
 
+    public $mailersFroms = [];
+
     private $_mailer_locator;
 
     /**
@@ -73,7 +75,7 @@ class EmailComponent extends BaseObject
 
         $mailer = $this->getMailer($mailerType);
         if (empty($data->from)) {
-            $data->from = $mailer->defaultFrom;
+            $data->from = !empty($this->mailersFroms[$mailerType]) ? $this->mailersFroms[$mailerType] : $mailer->defaultFrom;
         }
         $message = $mailer
             ->compose()
