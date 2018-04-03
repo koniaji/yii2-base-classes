@@ -8,10 +8,12 @@
 
 namespace Zvinger\BaseClasses\app\modules\api\admin\v1;
 
+use yii\filters\auth\HttpBearerAuth;
 use Zvinger\BaseClasses\app\modules\api\admin\AdminApiModule;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 use Zvinger\BaseClasses\app\modules\api\admin\v1\components\user\VendorAdminUserComponent;
+use yii\web\Response;
 
 /**
  * Class AdminApiVendorModule
@@ -20,6 +22,27 @@ use Zvinger\BaseClasses\app\modules\api\admin\v1\components\user\VendorAdminUser
  */
 class AdminApiVendorModule extends AdminApiModule implements BootstrapInterface
 {
+    public function init()
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+        \Yii::$app->user->enableSession = FALSE;
+        if (!\Yii::$app->request->isOptions) {
+            $this->attachBehavior('authenticator', [
+                'class' => HttpBearerAuth::class,
+            ]);
+            $this->attachBehavior('access', [
+                'class' => \yii2mod\rbac\filters\AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => TRUE,
+                        'roles' => ['admin'],
+                    ],
+                ],
+            ]);
+        }
+
+        parent::init();
+    }
 
     /**
      * Bootstrap method to be called during application bootstrap stage.

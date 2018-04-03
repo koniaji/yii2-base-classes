@@ -13,6 +13,7 @@ use yii\behaviors\TimestampBehavior;
  * @property string $type
  * @property string $path
  * @property string $info
+ * @property string $deleted
  * @property int $created_at
  * @property int $updated_at
  */
@@ -45,6 +46,7 @@ class FileStorageElementObject extends \yii\db\ActiveRecord
             [['component'], 'string', 'max' => 32],
             [['type'], 'string', 'max' => 100],
             [['path'], 'string', 'max' => 500],
+            [['deleted'], 'integer'],
         ];
     }
 
@@ -54,14 +56,23 @@ class FileStorageElementObject extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id'         => 'ID',
-            'component'  => 'Component',
-            'type'       => 'Type',
-            'path'       => 'Path',
-            'info'       => 'Info',
+            'id' => 'ID',
+            'component' => 'Component',
+            'type' => 'Type',
+            'path' => 'Path',
+            'info' => 'Info',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
+    }
+
+    /**
+     * @inheritdoc
+     * @return FileStorageElementQuery the active query used by this AR class.
+     */
+    public static function findNotDeleted()
+    {
+        return static::findDeleted()->andWhere('deleted is null');
     }
 
     /**

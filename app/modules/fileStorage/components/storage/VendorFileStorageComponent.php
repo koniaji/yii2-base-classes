@@ -56,11 +56,11 @@ class VendorFileStorageComponent extends BaseObject
      * @throws \yii\base\InvalidConfigException
      * @throws ModelValidateException
      */
-    public function uploadPostFile($fileKey = 'file', $type = 'default')
+    public function uploadPostFile($fileKey = 'file', $type = 'default', $category = NULL)
     {
         $file = UploadedFile::getInstanceByName($fileKey);
 
-        return $this->uploadLocalFile($file, $type);
+        return $this->uploadLocalFile($file, $type, $category);
     }
 
     /**
@@ -72,15 +72,15 @@ class VendorFileStorageComponent extends BaseObject
     {
         $object = new FileStorageElementObject([
             'component' => $fileStorageSaveResult->component,
-            'path'      => $fileStorageSaveResult->path,
+            'path' => $fileStorageSaveResult->path,
         ]);
         if (!$object->save()) {
             throw new ModelValidateException($object);
         }
 
         $result = new SavedFileModel([
-            'component'            => $fileStorageSaveResult->component,
-            'fileStorageElement'   => $object,
+            'component' => $fileStorageSaveResult->component,
+            'fileStorageElement' => $object,
             'fileStorageComponent' => $this,
         ]);
 
@@ -113,7 +113,7 @@ class VendorFileStorageComponent extends BaseObject
      * @throws ModelValidateException
      * @throws \yii\base\InvalidConfigException
      */
-    public function uploadLocalFile(UploadedFile $file, $type = 'default'): SavedFileModel
+    public function uploadLocalFile(UploadedFile $file, $type = 'default', $category = NULL): SavedFileModel
     {
         $storage = $this->getStorage($type);
         $result = $storage->save($file);
