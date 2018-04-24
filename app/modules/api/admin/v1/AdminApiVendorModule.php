@@ -19,6 +19,15 @@ use yii\web\Response;
  * Class AdminApiVendorModule
  * @package Zvinger\BaseClasses\app\modules\api\admin\v1
  * @property VendorAdminUserComponent $userComponent
+ * @SWG\Swagger(
+ *     basePath="/api/admin/",
+ *     produces={"application/json"},
+ *     consumes={"application/json"},
+ *     host=API_HOST,
+ *     @SWG\Info(version="1.0", title="Basical API"),
+ * )
+ * @throws \ReflectionException
+ *
  */
 class AdminApiVendorModule extends AdminApiModule implements BootstrapInterface
 {
@@ -52,6 +61,7 @@ class AdminApiVendorModule extends AdminApiModule implements BootstrapInterface
     {
         $app->urlManager->addRules([
             ['class' => 'yii\rest\UrlRule', 'controller' => $this->uniqueId . '/user'],
+            ['class' => 'yii\rest\UrlRule', 'controller' => $this->uniqueId . '/role', 'only' => ['index']],
         ]);
         $app->components = [
             'userComponent' => VendorAdminUserComponent::class,

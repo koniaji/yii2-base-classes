@@ -47,7 +47,7 @@ class DocsController extends Controller
                 // Тhe list of directories that contains the swagger annotations.
                 'scanDir' => [
                     Yii::getAlias($basePath . '/controllers'),
-//                    Yii::getAlias($basePath . '/models'),
+                    //                    Yii::getAlias($basePath . '/models'),
                     Yii::getAlias($basePath . '/responses'),
                 ],
             ],
