@@ -61,7 +61,7 @@ class AdminApiVendorModule extends AdminApiModule implements BootstrapInterface
     {
         $app->urlManager->addRules([
             ['class' => 'yii\rest\UrlRule', 'controller' => $this->uniqueId . '/user'],
-            ['class' => 'yii\rest\UrlRule', 'controller' => $this->uniqueId . '/role', 'only' => ['index']],
+            ['class' => 'yii\rest\UrlRule', 'controller' => $this->uniqueId . '/role', 'only' => ['index', 'options']],
         ]);
         $app->components = [
             'userComponent' => VendorAdminUserComponent::class,
