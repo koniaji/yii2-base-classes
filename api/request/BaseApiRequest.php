@@ -9,57 +9,12 @@
 namespace Zvinger\BaseClasses\api\request;
 
 
-use yii\base\BaseObject;
-use yii\web\BadRequestHttpException;
+use Zvinger\BaseClasses\api\misc\BaseUserIncomeApiModel;
 
-abstract class BaseApiRequest extends BaseObject
+abstract class BaseApiRequest extends BaseUserIncomeApiModel
 {
-    protected $errorMessage;
-
-    /**
-     * @param null $data
-     * @return static
-     * @throws BadRequestHttpException
-     */
-    public static function createRequest($data = NULL)
+    public static function getBaseData()
     {
-        if ($data === NULL) {
-            $data = \Yii::$app->request->post();
-        }
-        $request = new static;
-
-        $object = $request->loadRequest($data);
-        if (!$object->validate()) {
-            throw new BadRequestHttpException($object->errorMessage);
-        }
-
-        return $object;
-    }
-
-    public function validate()
-    {
-        return TRUE;
-    }
-
-    /**
-     * @param $data
-     * @return static
-     */
-    public function loadRequest($data)
-    {
-        return \Yii::configure($this, $data);
-    }
-
-    protected function validateRequired($fields = [])
-    {
-        foreach ($fields as $field) {
-            if (!isset($this->{$field}) || $this->{$field} === NULL) {
-                $this->errorMessage = 'Empty Request field: ' . $field;
-
-                return FALSE;
-            }
-        }
-
-        return TRUE;
+        return \Yii::$app->request->post();
     }
 }
