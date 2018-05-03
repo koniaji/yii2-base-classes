@@ -9,6 +9,7 @@
 namespace Zvinger\BaseClasses\app\modules\api\admin\v1;
 
 use yii\filters\auth\HttpBearerAuth;
+use Zvinger\BaseClasses\api\filters\OptionsCorsFilter;
 use Zvinger\BaseClasses\app\modules\api\admin\AdminApiModule;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
@@ -36,6 +37,7 @@ class AdminApiVendorModule extends AdminApiModule implements BootstrapInterface
         \Yii::$app->response->format = Response::FORMAT_JSON;
         \Yii::$app->user->enableSession = FALSE;
         if (!\Yii::$app->request->isOptions) {
+            $this->attachBehavior('cors', OptionsCorsFilter::class);
             $this->attachBehavior('authenticator', [
                 'class' => HttpBearerAuth::class,
             ]);
