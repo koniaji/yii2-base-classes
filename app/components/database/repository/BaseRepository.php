@@ -77,7 +77,10 @@ abstract class BaseRepository
         return $this->getQuery($filter)->all();
     }
 
-    abstract protected function getQuery($filter): ActiveQuery;
+    protected function getQuery($filter): ActiveQuery
+    {
+        return static::$className::find();
+    }
 
     /**
      * @param $filter
