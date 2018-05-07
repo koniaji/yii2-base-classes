@@ -29,7 +29,9 @@ abstract class BaseRepository
     public function getApiModels($fillCallBack, $filter = NULL): array
     {
         if ($fillCallBack instanceof ApiRepositoryInterface) {
-            $fillCallBack = $fillCallBack->getFillModelCallback();
+            $fillCallBack = function ($object) use ($fillCallBack) {
+                return $fillCallBack->fillApiModelFromObject($object);
+            };
         }
 
         return $this->fillResultModels(
@@ -46,7 +48,7 @@ abstract class BaseRepository
     public function getApiModel($id, $fillCallBack)
     {
         if ($fillCallBack instanceof ApiRepositoryInterface) {
-            $fillCallBack = $fillCallBack->getFillModelCallback();
+            return $fillCallBack->fillApiModelFromObject($this->getObject($id));
         }
 
         return $this->fillResultModel($this->getObject($id), $fillCallBack);
@@ -114,13 +116,18 @@ abstract class BaseRepository
         return $callBack($repositoryObject);
     }
 
+    /**
+     * @param $saveModel
+     * @param $object_id
+     * @param ApiRepositoryInterface $apiRepository
+     * @return mixed
+     * @throws ModelValidateException
+     */
     public function updateApiObject($saveModel, $object_id, ApiRepositoryInterface $apiRepository)
     {
-        $fillObjectCallback = $apiRepository->getFillObjectCallback();
-        $fillObjectCallback($this->getObject($object_id), $saveModel);
-        $fillModelCallback = $apiRepository->getFillModelCallback();
+        $this->saveObject($apiRepository->fillObjectFromApiModel($this->getObject($object_id), $saveModel));
 
-        return $this->fillResultModel($this->getObject($object_id, TRUE), $fillModelCallback);
+        return $apiRepository->fillApiModelFromObject($this->getObject($object_id, TRUE));
     }
 
     /**
@@ -131,18 +138,26 @@ abstract class BaseRepository
      */
     public function createApiObject($saveModel, ApiRepositoryInterface $apiRepository)
     {
-        $fillObjectCallback = $apiRepository->getFillObjectCallback();
         /** @var ActiveRecord $object */
-        $object = $fillObjectCallback($this->createObject(), $saveModel);
-        if (!$object->save()) {
-            throw new ModelValidateException($object);
-        }
+        $object = $apiRepository->fillObjectFromApiModel($this->createObject(), $saveModel);
+        $this->saveObject($object);
 
-        return $this->getApiModel($object->id, $apiRepository->getFillModelCallback());
+        return $apiRepository->fillApiModelFromObject($this->getObject($object->id));
     }
 
     protected function createObject()
     {
         return new static::$className;
+    }
+
+    /**
+     * @param ActiveRecord $object
+     * @throws ModelValidateException
+     */
+    protected function saveObject(ActiveRecord $object)
+    {
+        if (!$object->save()) {
+            throw new ModelValidateException($object);
+        }
     }
 }

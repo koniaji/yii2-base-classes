@@ -9,15 +9,20 @@
 namespace Zvinger\BaseClasses\app\components\database\repository;
 
 
+use yii\db\ActiveRecord;
+
 interface ApiRepositoryInterface
 {
     /**
+     * @param ActiveRecord $object
      * @return callable|array
      */
-    public function getFillModelCallback();
+    public function fillApiModelFromObject($object);
 
     /**
-     * @return callable|array
+     * @param ActiveRecord $object
+     * @param $model
+     * @return ActiveRecord
      */
-    public function getFillObjectCallback();
+    public function fillObjectFromApiModel($object, $model);
 }

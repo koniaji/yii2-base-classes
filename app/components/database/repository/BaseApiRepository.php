@@ -28,7 +28,9 @@ abstract class BaseApiRepository implements ApiRepositoryInterface
      */
     public function updateModel($id, $request)
     {
-        return $this->repository->updateApiObject($request, $id, $this);
+        $updateApiObject = $this->repository->updateApiObject($request, $id, $this);
+
+        return $updateApiObject;
     }
 
     public function getModel($id)
