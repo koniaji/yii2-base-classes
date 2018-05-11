@@ -116,6 +116,30 @@ abstract class BaseRepository
         return $callBack($repositoryObject);
     }
 
+    protected function fillSimpleModel($from, $to, $keys = [])
+    {
+        if (is_string($to)) {
+            $to = new $to();
+        }
+        foreach ($from as $key => $value) {
+            if (empty($keys) || in_array($key, $keys)) {
+                $to->{$key} = $value;
+            }
+        }
+
+        return $to;
+    }
+
+    protected function fillSimpleModelsArray($from, $to, $keys = [])
+    {
+        $result = [];
+        foreach ($from as $item) {
+            $result[] = $this->fillSimpleModel($item, $to, $keys);
+        }
+
+        return $result;
+    }
+
     /**
      * @param $saveModel
      * @param $object_id
