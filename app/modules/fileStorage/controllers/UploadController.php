@@ -10,9 +10,10 @@ namespace Zvinger\BaseClasses\app\modules\fileStorage\controllers;
 
 use yii\rest\Controller;
 use yii\web\UploadedFile;
+use Zvinger\BaseClasses\api\controllers\BaseApiController;
 use Zvinger\BaseClasses\app\modules\fileStorage\VendorFileStorageModule;
 
-class UploadController extends Controller
+class UploadController extends BaseApiController
 {
     /**
      * @var VendorFileStorageModule
@@ -26,8 +27,11 @@ class UploadController extends Controller
      */
     public function actionFile()
     {
-        $result = $this->module->storage->uploadPostFile('file');
+        return $this->module->storage->uploadPostFile('file');
+    }
 
-        return $result;
+    public function actionFiles()
+    {
+        return $this->module->storage->uploadPostFiles('files');
     }
 }
