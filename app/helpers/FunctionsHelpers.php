@@ -2,6 +2,8 @@
 
 namespace Zvinger\BaseClasses\app\helpers;
 
+use DateTime;
+
 class FunctionsHelpers
 {
     /**
@@ -122,5 +124,25 @@ class FunctionsHelpers
     public static function getDebug()
     {
         return static::$_debugData;
+    }
+
+    public static function prepareKeyedText($array, $keyWrap = '')
+    {
+        $message = '';
+        foreach ($array as $key => $value) {
+            $message .= $keyWrap . $key . $keyWrap . ': ' . $value . PHP_EOL;
+        }
+
+        return $message;
+    }
+
+    public static function daysBetweenDates($date1, $date2)
+    {
+        return (new DateTime($date2))->diff(new DateTime($date1))->format("%a");
+    }
+
+    public static function getOneDayBefore($date)
+    {
+        return \DateTime::createFromFormat('Y-m-d', $date)->modify("-1 day")->format('Y-m-d');
     }
 }

@@ -9,6 +9,7 @@
 namespace Zvinger\BaseClasses\app\components\database\repository;
 
 
+use app\components\database\repository\miniFund\shareInfo\MiniFundShareInfoFilter;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -79,9 +80,15 @@ abstract class BaseRepository
         return $this->getQuery($filter)->all();
     }
 
+    /**
+     * @param MiniFundShareInfoFilter $filter
+     * @return ActiveQuery
+     */
     protected function getQuery($filter): ActiveQuery
     {
-        return static::$className::find();
+        $query = static::$className::find();
+
+        return $query;
     }
 
     /**
@@ -184,4 +191,6 @@ abstract class BaseRepository
             throw new ModelValidateException($object);
         }
     }
+
+
 }
