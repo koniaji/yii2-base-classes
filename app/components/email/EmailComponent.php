@@ -68,14 +68,17 @@ class EmailComponent extends BaseObject
     {
         if ($this->debug) {
             $mailerType = $this->debugMailer;
+            $data->from = 'test@test.test';
         }
         if (empty($mailerType)) {
             $mailerType = $this->defaulMailer;
         }
-
         $mailer = $this->getMailer($mailerType);
         if (empty($data->from)) {
-            $data->from = !empty($this->mailersFroms[$mailerType]) ? $this->mailersFroms[$mailerType] : $mailer->defaultFrom;
+            $data->from =
+                !empty($this->mailersFroms[$mailerType]) ?
+                    $this->mailersFroms[$mailerType] :
+                    $mailer->defaultFrom;
         }
         $message = $mailer
             ->compose()

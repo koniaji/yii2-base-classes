@@ -17,6 +17,8 @@ class ApiDocsSwaggerController extends Controller
 {
     public $scanPaths;
 
+    public $defaultAction = 'docs';
+
     /**
      * @inheritdoc
      */
