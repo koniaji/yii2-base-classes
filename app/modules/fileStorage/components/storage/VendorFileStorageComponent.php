@@ -63,6 +63,17 @@ class VendorFileStorageComponent extends BaseObject
         return $this->uploadLocalFile($file, $type, $category);
     }
 
+    public function uploadPostFiles($filesKey = 'file', $type = 'default', $category = NULL)
+    {
+        $files = UploadedFile::getInstancesByName($filesKey);
+        $result = [];
+        foreach ($files as $file) {
+            $result[] = $this->uploadLocalFile($file, $type, $category);
+        }
+
+        return $result;
+    }
+
     /**
      * @param FileStorageSaveResult $fileStorageSaveResult
      * @return SavedFileModel
@@ -72,15 +83,15 @@ class VendorFileStorageComponent extends BaseObject
     {
         $object = new FileStorageElementObject([
             'component' => $fileStorageSaveResult->component,
-            'path' => $fileStorageSaveResult->path,
+            'path'      => $fileStorageSaveResult->path,
         ]);
         if (!$object->save()) {
             throw new ModelValidateException($object);
         }
 
         $result = new SavedFileModel([
-            'component' => $fileStorageSaveResult->component,
-            'fileStorageElement' => $object,
+            'component'            => $fileStorageSaveResult->component,
+            'fileStorageElement'   => $object,
             'fileStorageComponent' => $this,
         ]);
 
