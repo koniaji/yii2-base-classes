@@ -6,6 +6,8 @@ use yii\helpers\ArrayHelper;
 use Zvinger\BaseClasses\app\modules\fileStorage\components\storage\storages\trntv\TerentevFileStorage;
 use Zvinger\BaseClasses\app\modules\fileStorage\components\storage\storages\url\UrlFileStorage;
 use Zvinger\BaseClasses\app\modules\fileStorage\components\storage\VendorFileStorageComponent;
+use Zvinger\BaseClasses\app\modules\fileStorage\parser\apiPhoto\ApiPhotoFileParser;
+use Zvinger\BaseClasses\app\modules\fileStorage\parser\interfaces\FileParserInterface;
 
 /**
  * fileStorage module definition class
@@ -67,4 +69,20 @@ class VendorFileStorageModule extends \yii\base\Module
         }
     }
 
+    public function parseFileElement($fileElementId, FileParserInterface $parserClass)
+    {
+        return $parserClass->parseFile($fileElementId);
+    }
+
+    /**
+     * @param $fileElementId
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function parseApiPhoto($fileElementId)
+    {
+        return $this->parseFileElement(
+            $fileElementId,
+            \Yii::createObject(ApiPhotoFileParser::class,[$this->storage])
+        );
+    }
 }
