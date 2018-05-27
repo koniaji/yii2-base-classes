@@ -30,18 +30,28 @@ class ApiPhotoFileParser implements FileParserInterface
         $model = new ApiPhotoModel();
         $model->photoId = $fileId;
         $element = $this->fileStorageComponent->storage->getFile($fileId);
-        $fullUrl = $this->fileStorageComponent->glide->createSignedUrl([
-            'fileStorage/glide',
-            'path' => $element->fileStorageElement->path,
-        ], true);
-//        $fullUrl = FULL_BASE_URL . '/fileStorage/glide?path=' . $element->fileStorageElement->path;
-        $model->photo75 =
-        $model->photo130 =
-        $model->photo640 =
-        $model->photo860 =
-        $model->photo1280 =
-        $model->photo2560 = $fullUrl;
+        $this->fillApiPhotoModel($model, $element);
+
+        //url: FULL_BASE_URL . '/fileStorage/glide?path=' . $element->fileStorageElement->path;
 
         return $model;
+    }
+
+    private function fillApiPhotoModel(ApiPhotoModel &$model, SavedFileModel $element)
+    {
+        $pattern = '/photo\d+/';
+
+        $modelVars = get_object_vars($model);
+        foreach ($modelVars as $name => $value) {
+            if(preg_match($pattern, $name)) {
+                $width = preg_replace('/[^\d]/', '', $name);
+
+                $model->$name = $this->fileStorageComponent->glide->createSignedUrl([
+                    'fileStorage/glide',
+                    'path' => $element->fileStorageElement->path,
+                    'w' => $width
+                ], true);
+            }
+        }
     }
 }
