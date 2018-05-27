@@ -12,6 +12,7 @@ use Zvinger\BaseClasses\app\modules\fileStorage\parser\interfaces\FileParserInte
 /**
  * fileStorage module definition class
  * @property VendorFileStorageComponent storage
+ * @property \trntv\glide\components\Glide glide
  */
 class VendorFileStorageModule extends \yii\base\Module
 {
@@ -27,12 +28,24 @@ class VendorFileStorageModule extends \yii\base\Module
 
     public $defaultStorage = 'default';
 
+    public $glideConfig;
+
     /**
      * @inheritdoc
      */
     public function init()
     {
         parent::init();
+        if (empty($this->glideConfig)) {
+            $this->glideConfig = [
+                'class'        => 'trntv\glide\components\Glide',
+                'sourcePath'   => '@webroot/storage/source/default',
+                'cachePath'    => '@webroot/storage/cache/default',
+                'urlManager'   => 'urlManager',
+                'maxImageSize' => env('GLIDE_MAX_IMAGE_SIZE'),
+                'signKey'      => env('GLIDE_SIGN_KEY'),
+            ];
+        }
         if (empty($this->components)) {
             $defaultComponentsSettings = [
                 'default' => [
@@ -65,6 +78,14 @@ class VendorFileStorageModule extends \yii\base\Module
                     'class'             => VendorFileStorageComponent::class,
                     'storageComponents' => $this->componentsSettings,
                 ],
+                'glide'   => [
+                    'class'        => 'trntv\glide\components\Glide',
+                    'sourcePath'   => '@storage/web/source',
+                    'cachePath'    => '@storage/cache',
+                    'urlManager'   => 'urlManagerStorage',
+                    'maxImageSize' => env('GLIDE_MAX_IMAGE_SIZE'),
+                    'signKey'      => env('GLIDE_SIGN_KEY'),
+                ],
             ];
         }
     }
@@ -82,7 +103,7 @@ class VendorFileStorageModule extends \yii\base\Module
     {
         return $this->parseFileElement(
             $fileElementId,
-            \Yii::createObject(ApiPhotoFileParser::class,[$this->storage])
+            \Yii::createObject(ApiPhotoFileParser::class, [$this->storage])
         );
     }
 }
