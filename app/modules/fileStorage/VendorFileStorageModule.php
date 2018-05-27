@@ -78,14 +78,7 @@ class VendorFileStorageModule extends \yii\base\Module
                     'class'             => VendorFileStorageComponent::class,
                     'storageComponents' => $this->componentsSettings,
                 ],
-                'glide'   => [
-                    'class'        => 'trntv\glide\components\Glide',
-                    'sourcePath'   => '@storage/web/source',
-                    'cachePath'    => '@storage/cache',
-                    'urlManager'   => 'urlManagerStorage',
-                    'maxImageSize' => env('GLIDE_MAX_IMAGE_SIZE'),
-                    'signKey'      => env('GLIDE_SIGN_KEY'),
-                ],
+                'glide'   => $this->glideConfig,
             ];
         }
     }
@@ -103,7 +96,7 @@ class VendorFileStorageModule extends \yii\base\Module
     {
         return $this->parseFileElement(
             $fileElementId,
-            \Yii::createObject(ApiPhotoFileParser::class, [$this->storage])
+            \Yii::createObject(ApiPhotoFileParser::class, [$this])
         );
     }
 }
