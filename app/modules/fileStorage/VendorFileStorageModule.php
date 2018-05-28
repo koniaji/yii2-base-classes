@@ -90,6 +90,7 @@ class VendorFileStorageModule extends \yii\base\Module
 
     /**
      * @param $fileElementId
+     * @return mixed
      * @throws \yii\base\InvalidConfigException
      */
     public function parseApiPhoto($fileElementId)

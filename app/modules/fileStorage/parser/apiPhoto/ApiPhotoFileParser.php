@@ -3,7 +3,7 @@
 namespace Zvinger\BaseClasses\app\modules\fileStorage\parser\apiPhoto;
 
 
-use Zvinger\BaseClasses\app\modules\fileStorage\components\storage\VendorFileStorageComponent;
+use Zvinger\BaseClasses\app\modules\fileStorage\components\storage\models\SavedFileModel;
 use Zvinger\BaseClasses\app\modules\fileStorage\parser\interfaces\FileParserInterface;
 use Zvinger\BaseClasses\app\modules\fileStorage\parser\models\ApiPhotoModel;
 use Zvinger\BaseClasses\app\modules\fileStorage\VendorFileStorageModule;
@@ -32,25 +32,30 @@ class ApiPhotoFileParser implements FileParserInterface
         $element = $this->fileStorageComponent->storage->getFile($fileId);
         $this->fillApiPhotoModel($model, $element);
 
-        //url: FULL_BASE_URL . '/fileStorage/glide?path=' . $element->fileStorageElement->path;
-
         return $model;
     }
 
+    /**
+     * @param ApiPhotoModel $model
+     * @param SavedFileModel $element
+     * @throws \yii\base\InvalidConfigException
+     */
     private function fillApiPhotoModel(ApiPhotoModel &$model, SavedFileModel $element)
     {
         $pattern = '/photo\d+/';
 
         $modelVars = get_object_vars($model);
+        $component = $element->fileStorageElement->component;
         foreach ($modelVars as $name => $value) {
-            if(preg_match($pattern, $name)) {
+            if (preg_match($pattern, $name)) {
                 $width = preg_replace('/[^\d]/', '', $name);
 
                 $model->$name = $this->fileStorageComponent->glide->createSignedUrl([
                     'fileStorage/glide',
-                    'path' => $element->fileStorageElement->path,
-                    'w' => $width
-                ], true);
+                    'component' => $component,
+                    'path'      => $element->fileStorageElement->path,
+                    'w'         => $width,
+                ], TRUE);
             }
         }
     }
