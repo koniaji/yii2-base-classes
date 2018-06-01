@@ -49,7 +49,6 @@ class ApiPhotoFileParser implements FileParserInterface
         foreach ($modelVars as $name => $value) {
             if (preg_match($pattern, $name)) {
                 $width = preg_replace('/[^\d]/', '', $name);
-
                 $model->$name = $this->fileStorageComponent->glide->createSignedUrl([
                     'fileStorage/glide',
                     'component' => $component,

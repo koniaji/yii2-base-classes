@@ -21,6 +21,9 @@ class ApiPhotoModel
     public $photo130;
 
     /** @var string */
+    public $photo320;
+
+    /** @var string */
     public $photo640;
 
     /** @var string */
