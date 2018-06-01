@@ -30,7 +30,9 @@ class ApiPhotoFileParser implements FileParserInterface
         $model = new ApiPhotoModel();
         $model->photoId = $fileId;
         $element = $this->fileStorageComponent->storage->getFile($fileId);
-        $this->fillApiPhotoModel($model, $element);
+        if (!empty($element)) {
+            $this->fillApiPhotoModel($model, $element);
+        }
 
         return $model;
     }
