@@ -56,8 +56,7 @@ class ApiPhotoFileParser implements FileParserInterface
                     'component' => $component,
                     'path'      => $element->fileStorageElement->path,
                     'w'         => $width,
-                    'fm'        => 'jpg',
-                    'q'         => 90,
+                    'fm'        => 'jpg'
                 ], TRUE);
             }
         }
