@@ -18,7 +18,7 @@
     "yii2mod/yii2-settings": "*",
     "yii2mod/yii2-rbac": "*",
     "trntv/yii2-glide": "^1.0.0",
-    "guzzlehttp/psr7": "dev-fixes as 1.4.2",
+    "guzzlehttp/psr7": "dev-fixes",
     "league/flysystem-aws-s3-v3": "^1.0@dev",
     "aws/aws-sdk-php": "^3.0@dev",
     "aws/aws-sdk-php-resources": "dev-master"
