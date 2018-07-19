@@ -3,6 +3,7 @@
 namespace Zvinger\BaseClasses\app\components\data\miscInfo\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use Zvinger\BaseClasses\app\models\work\user\object\VendorUserObject;
 
@@ -35,6 +36,14 @@ class BaseVendorMiscInfoObject extends ActiveRecord
     {
         return '{{%data_misc_info}}';
     }
+
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::class
+        ];
+    }
+
 
     public function beforeSave($insert)
     {
