@@ -191,6 +191,4 @@ abstract class BaseRepository
             throw new ModelValidateException($object);
         }
     }
-
-
 }
