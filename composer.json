@@ -20,7 +20,7 @@
     "trntv/yii2-glide": "^1.0.0",
     "league/flysystem-aws-s3-v3": "^1.0@dev",
     "aws/aws-sdk-php": "^3.0@dev",
-    "aws/aws-sdk-php-resources": "dev-master"
+    "aws/aws-sdk-php-resources": "*"
   },
   "autoload": {
     "psr-4": {
