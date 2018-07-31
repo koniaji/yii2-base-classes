@@ -15,7 +15,7 @@
   ],
   "minimum-stability": "dev",
   "require": {
-    "yiisoft/yii2": "~2.0.0",
+    "yiisoft/yii2": "^2.0.13",
     "yii2mod/yii2-settings": "*",
     "yii2mod/yii2-rbac": "*",
     "trntv/yii2-glide": "^1.0.0",
