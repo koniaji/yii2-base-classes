@@ -13,6 +13,7 @@
       "email": "shikto@mail.ru"
     }
   ],
+  "minimum-stability": "dev",
   "require": {
     "yiisoft/yii2": "~2.0.0",
     "yii2mod/yii2-settings": "*",
@@ -20,7 +21,8 @@
     "trntv/yii2-glide": "^1.0.0",
     "league/flysystem-aws-s3-v3": "^1.0",
     "aws/aws-sdk-php": "~3.0",
-    "aws/aws-sdk-php-resources": "^0.3.0"
+    "aws/aws-sdk-php-resources": "^0.3.0",
+    "illuminate/support": "^5.7@dev"
   },
   "autoload": {
     "psr-4": {

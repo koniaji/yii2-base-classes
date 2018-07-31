@@ -30,3 +30,5 @@ Once the extension is installed, simply use it in your code by  :
 ```php
 <?= \Zvinger\BaseClasses\AutoloadExample::widget(); ?>
 ```
+
+define `BASE_ADMIN_PATH` in `.env` file.

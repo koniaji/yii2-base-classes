@@ -16,12 +16,14 @@ use yii\base\BootstrapInterface;
 use Zvinger\BaseClasses\app\modules\api\admin\v1\components\user\VendorAdminUserComponent;
 use yii\web\Response;
 
+define('BASE_ADMIN_PATH', env('BASE_ADMIN_PATH', '/ap/admin/dwy'));
+
 /**
  * Class AdminApiVendorModule
  * @package Zvinger\BaseClasses\app\modules\api\admin\v1
  * @property VendorAdminUserComponent $userComponent
  * @SWG\Swagger(
- *     basePath="/api/admin/",
+ *     basePath=BASE_ADMIN_PATH,
  *     produces={"application/json"},
  *     consumes={"application/json"},
  *     host=API_HOST,
