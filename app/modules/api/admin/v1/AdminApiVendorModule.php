@@ -16,7 +16,7 @@ use yii\base\BootstrapInterface;
 use Zvinger\BaseClasses\app\modules\api\admin\v1\components\user\VendorAdminUserComponent;
 use yii\web\Response;
 
-define('BASE_ADMIN_PATH', env('BASE_ADMIN_PATH', '/ap/admin/dwy'));
+define('BASE_ADMIN_PATH', env('BASE_ADMIN_PATH', '/api/admin/dwy'));
 
 /**
  * Class AdminApiVendorModule
