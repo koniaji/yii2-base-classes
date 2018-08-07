@@ -8,6 +8,7 @@
 
 namespace Zvinger\BaseClasses\app\modules\api\admin\v1\controllers;
 
+use yii\base\Event;
 use Zvinger\BaseClasses\app\helpers\error\ErrorMessageHelper;
 use app\models\work\user\object\UserObject;
 use yii\filters\auth\HttpBearerAuth;
@@ -17,8 +18,10 @@ use Zvinger\BaseClasses\api\controllers\BaseApiController;
 use Zvinger\BaseClasses\app\models\work\user\object\VendorUserObject;
 use Zvinger\BaseClasses\app\modules\api\admin\v1\actions\user\create\UserCreateRequest;
 use Zvinger\BaseClasses\app\modules\api\admin\v1\actions\user\update\UserUpdateRequest;
+use Zvinger\BaseClasses\app\modules\api\admin\v1\AdminApiVendorModule;
 use Zvinger\BaseClasses\app\modules\api\admin\v1\components\user\models\UserApiAdminV1Model;
 use Zvinger\BaseClasses\app\modules\api\admin\v1\controllers\base\BaseVendorAdminV1Controller;
+use Zvinger\BaseClasses\app\modules\api\admin\v1\events\AdminUserSavedEvent;
 
 class UserController extends BaseVendorAdminV1Controller
 {
@@ -48,13 +51,16 @@ class UserController extends BaseVendorAdminV1Controller
      */
     public function actionView($id)
     {
-        return $this->module->userComponent->convertUserObjectToModel(UserObject::findOne($id));
+        $userApiAdminV1Model = $this->module->userComponent->convertUserObjectToModel(UserObject::findOne($id));
+
+        return $userApiAdminV1Model;
     }
 
     /**
      * @param $id
      * @return object
      * @throws BadRequestHttpException
+     * @throws \Exception
      * @SWG\Put(path="/vendor/users/{userId}",
      *     tags={"user"},
      *     summary="Обновление пользователя",
@@ -82,6 +88,10 @@ class UserController extends BaseVendorAdminV1Controller
         /** @var UserUpdateRequest $request */
         $request = \Yii::configure(new UserUpdateRequest(), \Yii::$app->request->post());
         $this->module->userComponent->updateUser($id, $request);
+        AdminApiVendorModule::getInstance()->trigger(AdminApiVendorModule::EVENT_USER_SAVED, new AdminUserSavedEvent([
+            'userId'  => $id,
+            'request' => $request,
+        ]));
 
         return $this->module->userComponent->convertUserObjectToModel($user);
     }
@@ -109,6 +119,10 @@ class UserController extends BaseVendorAdminV1Controller
         /** @var UserCreateRequest $request */
         $request = \Yii::configure(new UserCreateRequest(), \Yii::$app->request->post());
         $userId = $this->module->userComponent->createUser($request);
+        AdminApiVendorModule::getInstance()->trigger(AdminApiVendorModule::EVENT_USER_SAVED, new AdminUserSavedEvent([
+            'userId'  => $userId,
+            'request' => $request,
+        ]));
 
         return $this->module->userComponent->convertUserIdToModel($userId);
     }
