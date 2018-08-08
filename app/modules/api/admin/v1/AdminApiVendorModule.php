@@ -34,10 +34,13 @@ define('BASE_ADMIN_PATH', env('BASE_ADMIN_PATH', '/api/admin/dwy'));
  */
 class AdminApiVendorModule extends AdminApiModule implements BootstrapInterface
 {
+    const EVENT_USER_SAVED = 'event_user_saved';
+    const EVENT_USER_BEFORE_SEND = 'event_user_before_send';
+    
     public function init()
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
-        \Yii::$app->user->enableSession = FALSE;
+        \Yii::$app->user->enableSession = false;
         if (!\Yii::$app->request->isOptions) {
             $this->attachBehavior('cors', OptionsCorsFilter::class);
             $this->attachBehavior('authenticator', [
@@ -47,7 +50,7 @@ class AdminApiVendorModule extends AdminApiModule implements BootstrapInterface
                 'class' => \yii2mod\rbac\filters\AccessControl::class,
                 'rules' => [
                     [
-                        'allow' => TRUE,
+                        'allow' => true,
                         'roles' => ['admin'],
                     ],
                 ],
