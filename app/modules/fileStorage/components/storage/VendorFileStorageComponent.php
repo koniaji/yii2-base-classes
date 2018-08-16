@@ -10,6 +10,7 @@ namespace Zvinger\BaseClasses\app\modules\fileStorage\components\storage;
 
 use yii\base\BaseObject;
 use yii\di\ServiceLocator;
+use yii\web\BadRequestHttpException;
 use yii\web\UploadedFile;
 use Zvinger\BaseClasses\app\exceptions\model\ModelValidateException;
 use Zvinger\BaseClasses\app\modules\fileStorage\components\storage\models\FileStorageSaveResult;
@@ -56,14 +57,17 @@ class VendorFileStorageComponent extends BaseObject
      * @throws \yii\base\InvalidConfigException
      * @throws ModelValidateException
      */
-    public function uploadPostFile($fileKey = 'file', $type = 'default', $category = NULL)
+    public function uploadPostFile($fileKey = 'file', $type = 'default', $category = null)
     {
         $file = UploadedFile::getInstanceByName($fileKey);
+        if (empty($file)) {
+            throw new BadRequestHttpException("File not given");
+        }
 
         return $this->uploadLocalFile($file, $type, $category);
     }
 
-    public function uploadPostFiles($filesKey = 'file', $type = 'default', $category = NULL)
+    public function uploadPostFiles($filesKey = 'file', $type = 'default', $category = null)
     {
         $files = UploadedFile::getInstancesByName($filesKey);
         $result = [];
@@ -107,7 +111,7 @@ class VendorFileStorageComponent extends BaseObject
     {
         $object = FileStorageElementObject::findOne($file_id);
         if (empty($object)) {
-            return NULL;
+            return null;
         }
 
         $model = new SavedFileModel();
@@ -124,7 +128,7 @@ class VendorFileStorageComponent extends BaseObject
      * @throws ModelValidateException
      * @throws \yii\base\InvalidConfigException
      */
-    public function uploadLocalFile(UploadedFile $file, $type = 'default', $category = NULL): SavedFileModel
+    public function uploadLocalFile(UploadedFile $file, $type = 'default', $category = null): SavedFileModel
     {
         $storage = $this->getStorage($type);
         $result = $storage->save($file);
