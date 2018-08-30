@@ -96,4 +96,35 @@ class VendorFilterInfoService extends BaseObject
               'isDictionary' => $isDictionary, //Если мы привязываемся к инфе из dictionary_info
             ]));
     }
+
+    public function getData($key)
+    {
+        $query = DBFilterMiscInfo::find()
+            ->where([
+                'and',
+                ['object_type' => static::$object_type],
+                ['object_id' => $this->object_id],
+                ['key' => $key],
+            ]);
+        $objects = $query->all();
+
+        return $objects;
+    }
+
+    public function getValue($key, $isArray = false)
+    {
+        $objects = $this->getData($key);
+        $result = null;
+        foreach ($objects as $object) {
+            $resultValue = $object->value_id ?: $object->value_data;
+            if ($isArray) {
+                $result[] = $resultValue;
+            } else {
+                $result = $resultValue;
+                break;
+            }
+        }
+
+        return $result;
+    }
 }
