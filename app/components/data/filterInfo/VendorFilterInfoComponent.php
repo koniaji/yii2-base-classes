@@ -18,11 +18,16 @@ use Zvinger\BaseClasses\app\exceptions\model\ModelValidateException;
 
 class VendorFilterInfoComponent
 {
+    const FIELD_TYPE_DATA = 'data';
+    const FIELD_TYPE_DICTIONARY = 'dictionary';
+
     /**
      * @var SingleDictionaryElement[]
      */
     public $dictionary = [];
-    
+
+    public $types = [];
+
     public function initDictionary($interactive = true)
     {
         $cleanDictionary = $interactive ? Console::confirm("Clean old dictionary?", true) : true;
@@ -113,5 +118,10 @@ class VendorFilterInfoComponent
         }
 
         return $element;
+    }
+
+    public function getFieldType($key)
+    {
+        return ArrayHelper::getValue($this->types, $key, self::FIELD_TYPE_DICTIONARY);
     }
 }

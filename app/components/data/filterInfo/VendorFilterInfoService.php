@@ -28,8 +28,6 @@ class VendorFilterInfoService extends BaseObject
      */
     protected static $object_type;
 
-    protected $keys;
-
     public function __construct(int $object_id, string $object_type = null, $config = [])
     {
         parent::__construct($config);
