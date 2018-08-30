@@ -27,6 +27,8 @@ class VendorFileStorageComponent extends BaseObject
      */
     private $_storage_locator;
 
+    private $_temp_folder = '/tmp';
+
     public function init()
     {
         $this->_storage_locator = new ServiceLocator([
@@ -134,5 +136,32 @@ class VendorFileStorageComponent extends BaseObject
         $result = $storage->save($file);
 
         return $this->saveFile($result);
+    }
+
+    public function uploadExternalFile(string $fileUrl, string $extension = null)
+    {
+        $extension = $extension ?: 'file';
+        $tmpFile = $this->_temp_folder . '/' . \Yii::$app->security->generateRandomString(10) . '.' . $extension;
+        file_put_contents($tmpFile, fopen($fileUrl, 'r'));
+
+        return $this->uploadLocalFileByPath($tmpFile);
+    }
+
+    public function uploadLocalFileByPath($path, $type = 'default', $category = null): SavedFileModel
+    {
+        $file = new UploadedFile([
+            'name'     => $path,
+            'tempName' => $path,
+        ]);
+
+        return $this->uploadLocalFile($file, $type, $category);
+    }
+
+    /**
+     * @param string $temp_folder
+     */
+    public function setTempFolder(string $temp_folder): void
+    {
+        $this->_temp_folder = $temp_folder;
     }
 }
