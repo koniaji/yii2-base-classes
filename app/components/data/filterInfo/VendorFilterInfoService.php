@@ -13,6 +13,7 @@ use yii\base\InvalidCallException;
 use yii\base\UnknownPropertyException;
 use Zvinger\BaseClasses\app\components\data\filterInfo\models\BaseFilterElement;
 use Zvinger\BaseClasses\app\components\data\filterInfo\models\DBFilterMiscInfo;
+use Zvinger\BaseClasses\app\components\data\filterInfo\models\SimpleValueElement;
 
 class VendorFilterInfoService extends BaseObject
 {
@@ -68,5 +69,14 @@ class VendorFilterInfoService extends BaseObject
             ['key' => $key],
             ['value_id' => $value],
         ]);
+    }
+
+    public function setSimple($key, $value, $isDictionary)
+    {
+        return $this->setObjectDataByKey($key, new SimpleValueElement(
+            [ //  тут пример для информации которая сохраняется в виде единичного экземпляра
+              'value'        => $value,
+              'isDictionary' => $isDictionary, //Если мы привязываемся к инфе из dictionary_info
+            ]));
     }
 }

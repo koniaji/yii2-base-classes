@@ -12,6 +12,7 @@ use Yii;
  * @property string $title
  * @property string $description
  * @property int $sort
+ * @property int $fixed
  * @property int $created_at
  * @property int $updated_at
  * @property int $created_by
@@ -33,7 +34,7 @@ class DBDictionaryInfo extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['parent_id', 'sort', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
+            [['parent_id', 'sort', 'fixed', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['description'], 'string'],
             [['title'], 'string', 'max' => 255],
             [['parent_id'], 'exist', 'skipOnError' => true, 'targetClass' => DBDictionaryInfo::className(), 'targetAttribute' => ['parent_id' => 'id']],
@@ -51,6 +52,7 @@ class DBDictionaryInfo extends \yii\db\ActiveRecord
             'title' => 'Title',
             'description' => 'Description',
             'sort' => 'Sort',
+            'fixed' => 'Fixed',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'created_by' => 'Created By',

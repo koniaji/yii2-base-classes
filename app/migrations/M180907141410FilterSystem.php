@@ -34,6 +34,7 @@ class M180907141410FilterSystem extends Migration
             'title'       => $this->string(),
             'description' => $this->text(),
             'sort'        => $this->integer(),
+            'fixed'       => $this->boolean(),
             'created_at'  => $this->integer(),
             'updated_at'  => $this->integer(),
             'created_by'  => $this->integer(),
