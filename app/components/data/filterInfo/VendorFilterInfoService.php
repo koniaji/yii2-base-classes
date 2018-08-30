@@ -11,6 +11,7 @@ namespace Zvinger\BaseClasses\app\components\data\filterInfo;
 use yii\base\BaseObject;
 use yii\base\InvalidCallException;
 use yii\base\UnknownPropertyException;
+use yii\db\Query;
 use Zvinger\BaseClasses\app\components\data\filterInfo\models\BaseFilterElement;
 use Zvinger\BaseClasses\app\components\data\filterInfo\models\DBFilterMiscInfo;
 use Zvinger\BaseClasses\app\components\data\filterInfo\models\SimpleValueElement;
@@ -60,15 +61,33 @@ class VendorFilterInfoService extends BaseObject
     /**
      * @param string $key
      * @param mixed $value
+     * @return
      */
-    public static function getFilterIdsQuery(string $key, $value)
+    public static function getFilterIdsQuery(array $elements = [])
     {
-        return DBFilterMiscInfo::find()->where([
-            'and',
-            ['object_type' => static::$object_type],
-            ['key' => $key],
-            ['value_id' => $value],
-        ]);
+        $query = DBFilterMiscInfo::find();
+        $keys = array_keys($elements);
+        $query
+            ->select(['object_id', 'val_id' => 'count(`value_id`)', 'val_data' => 'count(`value_data`)'])
+            ->where([
+                'and',
+                ['object_type' => static::$object_type],
+                ['key' => $keys],
+            ])
+            ->groupBy(['object_id', 'key', 'value_id', 'value_data']);
+        $havingCondition = ['or'];
+        foreach ($elements as $key => $element) {
+            $havingCondition[] = ['and', ['key' => $key], $element];
+        }
+        $query->having($havingCondition);
+        $queryIds = new Query();
+        $queryIds->from(['filter' => $query])
+            ->select(['object_id'])
+            ->groupBy(['object_id'])
+            ->having(['count(object_id)' => count($keys)]);
+        $objectIds = $queryIds->column();
+
+        return $objectIds;
     }
 
     public function setSimple($key, $value, $isDictionary)

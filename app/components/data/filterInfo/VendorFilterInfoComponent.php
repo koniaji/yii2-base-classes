@@ -22,9 +22,7 @@ class VendorFilterInfoComponent
      * @var SingleDictionaryElement[]
      */
     public $dictionary = [];
-
-    private $childrens = [];
-
+    
     public function initDictionary($interactive = true)
     {
         $cleanDictionary = $interactive ? Console::confirm("Clean old dictionary?", true) : true;
