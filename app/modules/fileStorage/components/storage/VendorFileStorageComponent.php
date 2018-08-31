@@ -144,7 +144,7 @@ class VendorFileStorageComponent extends BaseObject
      * @return SavedFileModel
      * @throws \yii\base\Exception
      */
-    public function uploadExternalFile(string $fileUrl, string $extension = null)
+    public function uploadExternalFile(string $fileUrl, string $extension = null): SavedFileModel
     {
         $extension = $extension ?: 'file';
         $tmpFile = $this->_temp_folder . '/' . \Yii::$app->security->generateRandomString(10) . '.' . $extension;
