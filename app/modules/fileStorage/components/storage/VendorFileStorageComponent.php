@@ -137,7 +137,13 @@ class VendorFileStorageComponent extends BaseObject
 
         return $this->saveFile($result);
     }
-
+    
+    /**
+     * @param string $fileUrl
+     * @param string|null $extension
+     * @return SavedFileModel
+     * @throws \yii\base\Exception
+     */
     public function uploadExternalFile(string $fileUrl, string $extension = null)
     {
         $extension = $extension ?: 'file';
@@ -146,7 +152,15 @@ class VendorFileStorageComponent extends BaseObject
 
         return $this->uploadLocalFileByPath($tmpFile);
     }
-
+    
+    /**
+     * @param $path
+     * @param string $type
+     * @param null $category
+     * @return SavedFileModel
+     * @throws ModelValidateException
+     * @throws \yii\base\InvalidConfigException
+     */
     public function uploadLocalFileByPath($path, $type = 'default', $category = null): SavedFileModel
     {
         $file = new UploadedFile([
