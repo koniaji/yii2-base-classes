@@ -79,7 +79,7 @@ class VendorFilterInfoComponent
 
     public function getDictionaryBlock($objectId)
     {
-        $objects = DBDictionaryInfo::find()->where(['parent_id' => $objectId])->all();
+        $objects = DBDictionaryInfo::find()->where(['parent_id' => $objectId])->orderBy(['title' => 'SORT_ASC'])->all();
 
         return $objects;
     }
