@@ -48,6 +48,7 @@ class ApiPhotoFileParser implements FileParserInterface
 
         $modelVars = get_object_vars($model);
         $component = $element->fileStorageElement->component;
+        $model->photoOriginal = $element->getFullUrl();
         foreach ($modelVars as $name => $value) {
             if (preg_match($pattern, $name)) {
                 $width = preg_replace('/[^\d]/', '', $name);
@@ -56,8 +57,8 @@ class ApiPhotoFileParser implements FileParserInterface
                     'component' => $component,
                     'path'      => $element->fileStorageElement->path,
                     'w'         => $width,
-                    'fm'        => 'jpg'
-                ], TRUE);
+                    'fm'        => 'jpg',
+                ], true);
             }
         }
     }

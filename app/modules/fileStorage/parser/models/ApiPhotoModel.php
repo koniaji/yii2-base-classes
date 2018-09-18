@@ -14,6 +14,11 @@ class ApiPhotoModel
     /** @var int */
     public $photoId;
 
+    /**
+     * @var string
+     */
+    public $photoOriginal;
+
     /** @var string */
     public $photo75;
 
