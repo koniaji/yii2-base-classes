@@ -16,12 +16,14 @@ use yii\base\BootstrapInterface;
 use Zvinger\BaseClasses\app\modules\api\admin\v1\components\user\VendorAdminUserComponent;
 use yii\web\Response;
 
+define('BASE_ADMIN_PATH', env('BASE_ADMIN_PATH', '/api/admin/dwy'));
+
 /**
  * Class AdminApiVendorModule
  * @package Zvinger\BaseClasses\app\modules\api\admin\v1
  * @property VendorAdminUserComponent $userComponent
  * @SWG\Swagger(
- *     basePath="/api/admin/",
+ *     basePath=BASE_ADMIN_PATH,
  *     produces={"application/json"},
  *     consumes={"application/json"},
  *     host=API_HOST,
@@ -32,10 +34,13 @@ use yii\web\Response;
  */
 class AdminApiVendorModule extends AdminApiModule implements BootstrapInterface
 {
+    const EVENT_USER_SAVED = 'event_user_saved';
+    const EVENT_USER_BEFORE_SEND = 'event_user_before_send';
+    
     public function init()
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
-        \Yii::$app->user->enableSession = FALSE;
+        \Yii::$app->user->enableSession = false;
         if (!\Yii::$app->request->isOptions) {
             $this->attachBehavior('cors', OptionsCorsFilter::class);
             $this->attachBehavior('authenticator', [
@@ -45,7 +50,7 @@ class AdminApiVendorModule extends AdminApiModule implements BootstrapInterface
                 'class' => \yii2mod\rbac\filters\AccessControl::class,
                 'rules' => [
                     [
-                        'allow' => TRUE,
+                        'allow' => true,
                         'roles' => ['admin'],
                     ],
                 ],

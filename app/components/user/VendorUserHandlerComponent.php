@@ -19,6 +19,8 @@ use yii\base\BaseObject;
 use yii\base\Component;
 use Zvinger\BaseClasses\app\components\user\identity\VendorUserIdentity;
 use Zvinger\BaseClasses\app\components\data\miscInfo\VendorUserMiscInfoService;
+use Zvinger\BaseClasses\app\components\user\token\UserTokenHandler;
+use Zvinger\BaseClasses\app\exceptions\model\ModelValidateException;
 use Zvinger\BaseClasses\app\models\db\user\object\DBUserObject;
 use Zvinger\BaseClasses\app\models\work\user\object\VendorUserObject;
 
@@ -146,5 +148,25 @@ class VendorUserHandlerComponent extends Component
         ], [
             'id' => $user_id,
         ]);
+    }
+
+    public function changeUserPassword($user_id, $new_password)
+    {
+        $userObject = $this->getUserObject($user_id);
+        $userObject->setPassword($new_password);
+        if (!$userObject->save()) {
+            throw new ModelValidateException($userObject);
+        }
+        $tokenHandler = new UserTokenHandler($user_id);
+        $tokenHandler->invalidateAllOldTokens();
+
+        return TRUE;
+    }
+
+    public function createUserBearerToken($user_id)
+    {
+        $tokenHandler = new UserTokenHandler($user_id);
+
+        return $tokenHandler->generateBearerToken()->token;
     }
 }

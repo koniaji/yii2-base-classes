@@ -24,7 +24,7 @@ class VendorFileStorageModule extends \yii\base\Module
     /**
      * @var bool|array
      */
-    public $componentsSettings = FALSE;
+    public $componentsSettings = false;
 
     public $defaultStorage = 'default';
 
@@ -42,7 +42,7 @@ class VendorFileStorageModule extends \yii\base\Module
                 'sourcePath'   => '@webroot/storage/source/default',
                 'cachePath'    => '@webroot/storage/cache/default',
                 'urlManager'   => 'urlManager',
-                'maxImageSize' => env('GLIDE_MAX_IMAGE_SIZE'),
+                'maxImageSize' => env('GLIDE_MAX_IMAGE_SIZE', 4000000),
                 'signKey'      => env('GLIDE_SIGN_KEY'),
             ];
         }
@@ -63,7 +63,7 @@ class VendorFileStorageModule extends \yii\base\Module
                     'class' => UrlFileStorage::class,
                 ],
             ];
-            if ($this->componentsSettings === FALSE) {
+            if ($this->componentsSettings === false) {
                 $this->componentsSettings = $defaultComponentsSettings;
             } else {
                 $this->componentsSettings = ArrayHelper::merge($defaultComponentsSettings, $this->componentsSettings);

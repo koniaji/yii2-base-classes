@@ -47,4 +47,9 @@ class UserTokenHandler
 
         return $object;
     }
+
+    public function invalidateAllOldTokens()
+    {
+        UserBearerTokenObject::deleteAll(['user_id' => $this->_user_id]);
+    }
 }
