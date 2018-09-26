@@ -52,9 +52,11 @@ class BaseVendorUserMiscInfoQuery extends \yii\db\ActiveQuery
     public function handleMiscDataFilter()
     {
         if ($this->miscDataFilter) {
+            \Yii::info("Miscadatafilter  - " . print_r($this->miscDataFilter, 1));
             $objectIds = $this->getCurrentFilterObjectIds();
             $this->andWhere(['object_id' => $objectIds]);
         }
+        $this->miscDataFilter = null;
 
         return $this;
     }
