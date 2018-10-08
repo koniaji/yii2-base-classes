@@ -27,7 +27,7 @@ class UploadController extends BaseApiController
      */
     public function actionFile()
     {
-        return $this->module->storage->uploadPostFile('file');
+        return $this->module->storage->uploadPostFile('file', '');
     }
 
     public function actionFiles()

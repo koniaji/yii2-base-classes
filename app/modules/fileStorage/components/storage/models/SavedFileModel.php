@@ -33,7 +33,7 @@ class SavedFileModel extends BaseObject
     public function getFullUrl()
     {
         $fullBase = $baseUrl = $this->getComponent()->getBaseUrl();
-        if (!empty($baseUrl)) {
+        if (!empty($baseUrl) && substr($baseUrl, -1) != '/') {
             $fullBase = $baseUrl . DIRECTORY_SEPARATOR;
         }
 
