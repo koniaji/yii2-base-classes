@@ -36,6 +36,7 @@ class SavedFileModel extends BaseObject
         if (!empty($baseUrl) && substr($baseUrl, -1) != '/') {
             $fullBase = $baseUrl . DIRECTORY_SEPARATOR;
         }
+        $fullBase = str_replace('//', '/', $fullBase);
 
         return $fullBase . $this->fileStorageElement->path;
     }
