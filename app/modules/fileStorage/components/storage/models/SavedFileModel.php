@@ -33,10 +33,9 @@ class SavedFileModel extends BaseObject
     public function getFullUrl()
     {
         $fullBase = $baseUrl = $this->getComponent()->getBaseUrl();
-        if (!empty($baseUrl) && substr($baseUrl, -1) != '/') {
+        if (!empty($baseUrl) && substr($baseUrl, -1) != '/' && substr($this->fileStorageElement->path, 0,1) != '/') {
             $fullBase = $baseUrl . DIRECTORY_SEPARATOR;
         }
-        $fullBase = str_replace('//', '/', $fullBase);
 
         return $fullBase . $this->fileStorageElement->path;
     }
