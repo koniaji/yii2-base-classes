@@ -42,19 +42,23 @@ class BaseVendorUserMiscInfoQuery extends \yii\db\ActiveQuery
      * @inheritdoc
      * @return BaseVendorMiscInfoObject[]|array
      */
-    public function all($db = NULL)
+    public function all($db = null)
     {
         $this->handleMiscDataFilter();
 
         return parent::all($db);
     }
 
-    protected function handleMiscDataFilter()
+    public function handleMiscDataFilter()
     {
         if ($this->miscDataFilter) {
+            \Yii::info("Miscadatafilter  - " . print_r($this->miscDataFilter, 1));
             $objectIds = $this->getCurrentFilterObjectIds();
             $this->andWhere(['object_id' => $objectIds]);
         }
+        $this->miscDataFilter = null;
+
+        return $this;
     }
 
 
@@ -62,7 +66,7 @@ class BaseVendorUserMiscInfoQuery extends \yii\db\ActiveQuery
      * @inheritdoc
      * @return BaseVendorMiscInfoObject|array|null
      */
-    public function one($db = NULL)
+    public function one($db = null)
     {
         $this->handleMiscDataFilter();
 

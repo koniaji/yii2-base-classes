@@ -61,8 +61,9 @@ class VendorFileStorageComponent extends BaseObject
      * @throws \yii\base\InvalidConfigException
      * @throws ModelValidateException
      */
-    public function uploadPostFile($fileKey = 'file', $type = 'default', $category = null)
+    public function uploadPostFile($fileKey = 'file', $type = null, $category = null)
     {
+        $type = $type ?: $this->getDefaultType();
         $file = UploadedFile::getInstanceByName($fileKey);
         if (empty($file)) {
             throw new BadRequestHttpException("File not given");
@@ -71,8 +72,9 @@ class VendorFileStorageComponent extends BaseObject
         return $this->uploadLocalFile($file, $type, $category);
     }
 
-    public function uploadPostFiles($filesKey = 'file', $type = 'default', $category = null)
+    public function uploadPostFiles($filesKey = 'file', $type = null, $category = null)
     {
+        $type = $type ?: $this->getDefaultType();
         $files = UploadedFile::getInstancesByName($filesKey);
         $result = [];
         foreach ($files as $file) {
@@ -80,6 +82,11 @@ class VendorFileStorageComponent extends BaseObject
         }
 
         return $result;
+    }
+
+    private function getDefaultType()
+    {
+        return env('DEFAULT_STORAGE');
     }
 
     /**

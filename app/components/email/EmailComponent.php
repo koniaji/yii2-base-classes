@@ -93,6 +93,8 @@ class EmailComponent extends BaseObject
             $message->setTextBody($data->body);
         }
 
-        return $message->send();
+        $send = $message->send();
+
+        return $send;
     }
 }
