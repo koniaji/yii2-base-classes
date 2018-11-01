@@ -31,9 +31,11 @@ class VendorFileStorageComponent extends BaseObject
 
     public function init()
     {
-        $this->_storage_locator = new ServiceLocator([
-            'components' => $this->storageComponents,
-        ]);
+        $this->_storage_locator = new ServiceLocator(
+            [
+                'components' => $this->storageComponents,
+            ]
+        );
         parent::init();
     }
 
@@ -87,19 +89,23 @@ class VendorFileStorageComponent extends BaseObject
      */
     private function saveFile(FileStorageSaveResult $fileStorageSaveResult)
     {
-        $object = new FileStorageElementObject([
-            'component' => $fileStorageSaveResult->component,
-            'path'      => $fileStorageSaveResult->path,
-        ]);
+        $object = new FileStorageElementObject(
+            [
+                'component' => $fileStorageSaveResult->component,
+                'path' => $fileStorageSaveResult->path,
+            ]
+        );
         if (!$object->save()) {
             throw new ModelValidateException($object);
         }
 
-        $result = new SavedFileModel([
-            'component'            => $fileStorageSaveResult->component,
-            'fileStorageElement'   => $object,
-            'fileStorageComponent' => $this,
-        ]);
+        $result = new SavedFileModel(
+            [
+                'component' => $fileStorageSaveResult->component,
+                'fileStorageElement' => $object,
+                'fileStorageComponent' => $this,
+            ]
+        );
 
         return $result;
     }
@@ -123,6 +129,14 @@ class VendorFileStorageComponent extends BaseObject
         return $model;
     }
 
+    public function deleteFile($file_id)
+    {
+        $file = $this->getFile($file_id);
+        if ($file->component) {
+            return $file->component->deleteFile($file->fileStorageElement->path);
+        }
+    }
+
     /**
      * @param $file
      * @param $type
@@ -137,7 +151,7 @@ class VendorFileStorageComponent extends BaseObject
 
         return $this->saveFile($result);
     }
-    
+
     /**
      * @param string $fileUrl
      * @param string|null $extension
@@ -147,12 +161,12 @@ class VendorFileStorageComponent extends BaseObject
     public function uploadExternalFile(string $fileUrl, string $extension = null): SavedFileModel
     {
         $extension = $extension ?: 'file';
-        $tmpFile = $this->_temp_folder . '/' . \Yii::$app->security->generateRandomString(10) . '.' . $extension;
+        $tmpFile = $this->_temp_folder.'/'.\Yii::$app->security->generateRandomString(10).'.'.$extension;
         file_put_contents($tmpFile, fopen($fileUrl, 'r'));
 
         return $this->uploadLocalFileByPath($tmpFile);
     }
-    
+
     /**
      * @param $path
      * @param string $type
@@ -163,10 +177,12 @@ class VendorFileStorageComponent extends BaseObject
      */
     public function uploadLocalFileByPath($path, $type = 'default', $category = null): SavedFileModel
     {
-        $file = new UploadedFile([
-            'name'     => $path,
-            'tempName' => $path,
-        ]);
+        $file = new UploadedFile(
+            [
+                'name' => $path,
+                'tempName' => $path,
+            ]
+        );
 
         return $this->uploadLocalFile($file, $type, $category);
     }
