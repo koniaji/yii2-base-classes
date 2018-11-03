@@ -47,4 +47,10 @@ class UserApiAdminV1Model extends BaseObject
      * @SWG\Property()
      */
     public $roles = [];
+
+    /**
+     * @var int
+     * @SWG\Property()
+     */
+    public $loggedAt;
 }
