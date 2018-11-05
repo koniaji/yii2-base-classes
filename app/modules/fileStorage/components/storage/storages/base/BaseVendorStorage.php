@@ -38,4 +38,9 @@ abstract class BaseVendorStorage extends BaseObject
     {
         return NULL;
     }
+
+    public function deleteFile($path)
+    {
+        return true;
+    }
 }

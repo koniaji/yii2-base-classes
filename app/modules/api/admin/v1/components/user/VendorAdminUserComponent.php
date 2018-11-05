@@ -29,13 +29,16 @@ class VendorAdminUserComponent
      */
     public function convertUserObjectToModel(VendorUserObject $userObject)
     {
-        $userApiAdminV1Model = new UserApiAdminV1Model([
-            'username' => $userObject->username,
-            'email'    => $userObject->email,
-            'id'       => $userObject->id,
-            'status'   => $userObject->status,
-            'roles'    => $this->getUserRoles($userObject->id),
-        ]);
+        $userApiAdminV1Model = new UserApiAdminV1Model(
+            [
+                'username' => $userObject->username,
+                'email' => $userObject->email,
+                'id' => $userObject->id,
+                'status' => $userObject->status,
+                'loggedAt' => $userObject->logged_at,
+                'roles' => $this->getUserRoles($userObject->id),
+            ]
+        );
         $event = new AdminUserBeforeSendEvent();
         $event->userModel = &$userApiAdminV1Model;
         AdminApiVendorModule::getInstance()->trigger(AdminApiVendorModule::EVENT_USER_BEFORE_SEND, $event);
