@@ -8,12 +8,14 @@
 
 namespace Zvinger\BaseClasses\app\modules\api\base\requests\auth;
 
+use Zvinger\BaseClasses\api\request\BaseApiRequest;
+
 /**
  * Class ResetPasswordInitRequest
  * @package Zvinger\BaseClasses\app\modules\api\base\requests\auth
  * @SWG\Definition()
  */
-class ResetPasswordConfirmRequest
+class ResetPasswordConfirmRequest extends BaseApiRequest
 {
     /**
      * @var string

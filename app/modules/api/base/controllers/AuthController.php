@@ -9,9 +9,14 @@
 namespace Zvinger\BaseClasses\app\modules\api\base\controllers;
 
 use app\components\user\identity\UserIdentity;
+use yii\web\BadRequestHttpException;
+use yii\web\NotFoundHttpException;
+use Zvinger\BaseClasses\app\components\email\models\SendData;
 use \Zvinger\BaseClasses\app\components\user\token\UserTokenHandler;
 use app\models\work\user\object\UserObject;
+use Zvinger\BaseClasses\app\modules\api\base\requests\auth\ResetPasswordConfirmRequest;
 use Zvinger\BaseClasses\app\modules\api\base\requests\auth\ResetPasswordInitRequest;
+use Zvinger\BaseClasses\app\modules\api\base\requests\auth\SavePasswordRequest;
 use Zvinger\BaseClasses\app\modules\api\base\responses\auth\BaseAuthLoginResponse;
 use yii\web\UnauthorizedHttpException;
 use Zvinger\BaseClasses\api\controllers\BaseApiController;
@@ -93,6 +98,19 @@ class AuthController extends BaseApiController
      */
     public function actionResetPasswordInit()
     {
+        $code = rand(100000, 999999);
+        $static = ResetPasswordInitRequest::createRequest();
+        \Yii::$app->email->send(
+            new SendData(
+                [
+                    'to' => $static->email,
+                    'subject' => 'Сброс пароля',
+                    'body' => 'Ваш код сброса пароля - '.$code,
+                ]
+            )
+        );
+        \Yii::$app->keyStorage->set('key.reset.password.'.$static->email, $code);
+
         return \Yii::createObject(
             [
                 'class' => ResetPasswordInitResponse::class,
@@ -122,10 +140,15 @@ class AuthController extends BaseApiController
      */
     public function actionResetPasswordConfirm()
     {
+        $request = ResetPasswordConfirmRequest::createRequest();
+        $email = $request->email;
+        $key = 'key.reset.password.'.$email;
+        $codeSaved = \Yii::$app->keyStorage->get($key);
+
         return \Yii::createObject(
             [
                 'class' => ResetPasswordInitResponse::class,
-                'success' => true,
+                'success' => $request->code == $codeSaved,
             ]
         );
     }
@@ -148,13 +171,31 @@ class AuthController extends BaseApiController
      * @param string $lang
      * @return ResetPasswordInitResponse
      * @throws \yii\base\InvalidConfigException
+     * @throws \yii\base\Exception
      */
     public function actionSavePassword()
     {
+        $request = SavePasswordRequest::createRequest();
+        $email = $request->email;
+        $key = 'key.reset.password.'.$email;
+        $codeSaved = \Yii::$app->keyStorage->get($key);
+        if ($codeSaved == $request->code) {
+            $user = UserObject::find()->where(['email' => $email])->one();
+            if (empty($user)) {
+                throw new NotFoundHttpException("Пользователь не найден");
+            }
+            $user->setPassword($request->password);
+            $user->save();
+            $handler = new UserTokenHandler($user->id);
+            $tokenObject = $handler->generateBearerToken();
+        } else {
+            throw new BadRequestHttpException("Неверный код");
+        }
+
         return \Yii::createObject(
             [
                 'class' => SavePasswordResponse::class,
-                'token' => '123',
+                'token' => $tokenObject->token,
             ]
         );
     }
