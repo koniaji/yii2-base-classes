@@ -86,7 +86,7 @@ class VendorFileStorageComponent extends BaseObject
 
     private function getDefaultType()
     {
-        return env('DEFAULT_STORAGE');
+        return env('DEFAULT_STORAGE', 'default');
     }
 
     /**
