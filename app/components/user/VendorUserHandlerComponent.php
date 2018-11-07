@@ -48,16 +48,24 @@ class VendorUserHandlerComponent extends Component
     public function createUser($email, $password, $username = null)
     {
         $handler = new UserCreateHandler();
-        \Yii::configure($handler, [
-            'username' => $username,
-            'email'    => $email,
-            'password' => $password,
-        ]);
+        \Yii::configure(
+            $handler,
+            [
+                'username' => $username,
+                'email' => $email,
+                'password' => $password,
+            ]
+        );
 
         $userObject = $handler->createUser();
         $this->trigger(self::EVENT_USER_CREATED, new UserCreatedEvent(['user' => $userObject]));
 
         return $userObject;
+    }
+
+    public function isUserExists($email, $username = null)
+    {
+        return UserObject::find()->where(['email' => $email])->andFilterWhere(['username' => $username])->count() > 0;
     }
 
     /**
@@ -141,16 +149,20 @@ class VendorUserHandlerComponent extends Component
 
     public function isOnline($user_id)
     {
-        return (time() - DBUserObject::find()->select('logged_at')->where(['id' => $user_id])->scalar()) < $this->onlineSeconds;
+        return (time() - DBUserObject::find()->select('logged_at')->where(['id' => $user_id])->scalar(
+                )) < $this->onlineSeconds;
     }
 
     public function updateOnline($user_id)
     {
-        DBUserObject::updateAll([
-            $this->onlineAttribute => time(),
-        ], [
-            'id' => $user_id,
-        ]);
+        DBUserObject::updateAll(
+            [
+                $this->onlineAttribute => time(),
+            ],
+            [
+                'id' => $user_id,
+            ]
+        );
     }
 
     public function changeUserPassword($user_id, $new_password)
