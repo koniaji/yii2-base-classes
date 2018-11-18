@@ -9,29 +9,41 @@
 namespace Zvinger\BaseClasses\app\modules\api\admin\v1\components\user;
 
 use app\models\work\user\object\UserObject;
+use yii\base\Event;
 use yii\rbac\Role;
 use Zvinger\BaseClasses\app\exceptions\model\ModelValidateException;
 use Zvinger\BaseClasses\app\models\work\user\object\VendorUserObject;
 use Zvinger\BaseClasses\app\modules\api\admin\v1\actions\user\create\UserCreateRequest;
 use Zvinger\BaseClasses\app\modules\api\admin\v1\actions\user\update\UserUpdateRequest;
+use Zvinger\BaseClasses\app\modules\api\admin\v1\AdminApiVendorModule;
 use Zvinger\BaseClasses\app\modules\api\admin\v1\components\user\models\UserApiAdminV1Model;
 use Zvinger\BaseClasses\app\modules\api\admin\v1\components\user\models\UserSetInfo;
+use Zvinger\BaseClasses\app\modules\api\admin\v1\events\AdminUserBeforeSendEvent;
 
 class VendorAdminUserComponent
 {
+
     /**
      * @param VendorUserObject $userObject
      * @return UserApiAdminV1Model
      */
     public function convertUserObjectToModel(VendorUserObject $userObject)
     {
-        return new UserApiAdminV1Model([
-            'username' => $userObject->username,
-            'email'    => $userObject->email,
-            'id'       => $userObject->id,
-            'status'   => $userObject->status,
-            'roles'    => $this->getUserRoles($userObject->id),
-        ]);
+        $userApiAdminV1Model = new UserApiAdminV1Model(
+            [
+                'username' => $userObject->username,
+                'email' => $userObject->email,
+                'id' => $userObject->id,
+                'status' => $userObject->status,
+                'loggedAt' => $userObject->logged_at,
+                'roles' => $this->getUserRoles($userObject->id),
+            ]
+        );
+        $event = new AdminUserBeforeSendEvent();
+        $event->userModel = &$userApiAdminV1Model;
+        AdminApiVendorModule::getInstance()->trigger(AdminApiVendorModule::EVENT_USER_BEFORE_SEND, $event);
+
+        return $userApiAdminV1Model;
     }
 
     /**
@@ -72,7 +84,7 @@ class VendorAdminUserComponent
         }
         $this->setUserRoles($userObject, $userSetInfo->roles);
 
-        return TRUE;
+        return true;
     }
 
     /**

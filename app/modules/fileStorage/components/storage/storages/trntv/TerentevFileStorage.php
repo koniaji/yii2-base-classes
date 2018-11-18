@@ -51,5 +51,12 @@ class TerentevFileStorage extends BaseVendorStorage
         return $this->component->baseUrl;
     }
 
+    public function deleteFile($path)
+    {
+        $delete = $this->component->getFilesystem()->delete($path);
+
+        return $delete;
+    }
+
 
 }

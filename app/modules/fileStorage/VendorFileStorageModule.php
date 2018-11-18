@@ -6,10 +6,13 @@ use yii\helpers\ArrayHelper;
 use Zvinger\BaseClasses\app\modules\fileStorage\components\storage\storages\trntv\TerentevFileStorage;
 use Zvinger\BaseClasses\app\modules\fileStorage\components\storage\storages\url\UrlFileStorage;
 use Zvinger\BaseClasses\app\modules\fileStorage\components\storage\VendorFileStorageComponent;
+use Zvinger\BaseClasses\app\modules\fileStorage\parser\apiPhoto\ApiPhotoFileParser;
+use Zvinger\BaseClasses\app\modules\fileStorage\parser\interfaces\FileParserInterface;
 
 /**
  * fileStorage module definition class
  * @property VendorFileStorageComponent storage
+ * @property \trntv\glide\components\Glide glide
  */
 class VendorFileStorageModule extends \yii\base\Module
 {
@@ -21,9 +24,11 @@ class VendorFileStorageModule extends \yii\base\Module
     /**
      * @var bool|array
      */
-    public $componentsSettings = FALSE;
+    public $componentsSettings = false;
 
     public $defaultStorage = 'default';
+
+    public $glideConfig;
 
     /**
      * @inheritdoc
@@ -31,6 +36,16 @@ class VendorFileStorageModule extends \yii\base\Module
     public function init()
     {
         parent::init();
+        if (empty($this->glideConfig)) {
+            $this->glideConfig = [
+                'class'        => 'trntv\glide\components\Glide',
+                'sourcePath'   => '@webroot/storage/source/default',
+                'cachePath'    => '@webroot/storage/cache/default',
+                'urlManager'   => 'urlManager',
+                'maxImageSize' => env('GLIDE_MAX_IMAGE_SIZE', 4000000),
+                'signKey'      => env('GLIDE_SIGN_KEY'),
+            ];
+        }
         if (empty($this->components)) {
             $defaultComponentsSettings = [
                 'default' => [
@@ -48,7 +63,7 @@ class VendorFileStorageModule extends \yii\base\Module
                     'class' => UrlFileStorage::class,
                 ],
             ];
-            if ($this->componentsSettings === FALSE) {
+            if ($this->componentsSettings === false) {
                 $this->componentsSettings = $defaultComponentsSettings;
             } else {
                 $this->componentsSettings = ArrayHelper::merge($defaultComponentsSettings, $this->componentsSettings);
@@ -63,8 +78,26 @@ class VendorFileStorageModule extends \yii\base\Module
                     'class'             => VendorFileStorageComponent::class,
                     'storageComponents' => $this->componentsSettings,
                 ],
+                'glide'   => $this->glideConfig,
             ];
         }
     }
 
+    public function parseFileElement($fileElementId, FileParserInterface $parserClass)
+    {
+        return $parserClass->parseFile($fileElementId);
+    }
+
+    /**
+     * @param $fileElementId
+     * @return mixed
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function parseApiPhoto($fileElementId)
+    {
+        return $this->parseFileElement(
+            $fileElementId,
+            \Yii::createObject(ApiPhotoFileParser::class, [$this])
+        );
+    }
 }

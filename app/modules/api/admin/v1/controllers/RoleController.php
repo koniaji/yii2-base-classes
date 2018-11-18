@@ -15,7 +15,7 @@ use Zvinger\BaseClasses\app\modules\api\admin\v1\controllers\base\BaseVendorAdmi
 class RoleController extends BaseVendorAdminV1Controller
 {
     /**
-     * @SWG\GET(path="/vendor/roles",
+     * @SWG\Get(path="/vendor/roles",
      *     tags={"user"},
      *     summary="Получение списка ролей",
      *     @SWG\Response(

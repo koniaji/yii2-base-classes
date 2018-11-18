@@ -72,6 +72,11 @@ abstract class BaseRepository
         return $this->_objects[$id];
     }
 
+    public function getRepositoryObject($filter)
+    {
+        return $this->getQuery($filter)->one();
+    }
+
 
     protected $_objects = [];
 
@@ -81,7 +86,7 @@ abstract class BaseRepository
     }
 
     /**
-     * @param MiniFundShareInfoFilter $filter
+     * @param $filter
      * @return ActiveQuery
      */
     protected function getQuery($filter): ActiveQuery

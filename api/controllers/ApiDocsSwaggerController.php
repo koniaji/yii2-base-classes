@@ -17,6 +17,8 @@ class ApiDocsSwaggerController extends Controller
 {
     public $scanPaths;
 
+    public $defaultAction = 'docs';
+
     /**
      * @inheritdoc
      */
@@ -36,7 +38,7 @@ class ApiDocsSwaggerController extends Controller
             'json-schema' => [
                 'class'   => 'yii2mod\swagger\OpenAPIRenderer',
                 'scanDir' => $arr,
-                'cache'   => YII_ENV_DEV ? NULL : 'cache',
+                'cache'   => YII_ENV_DEV ? NULL : NULL,
             ],
             'error'       => [
                 'class' => 'yii\web\ErrorAction',
