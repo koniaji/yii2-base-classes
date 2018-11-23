@@ -142,6 +142,5 @@ Bearer auth: <input id="input_bearer" class="body-param__text">
 </html>
 <?php $this->endPage(); ?>
 <script
-        src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"
-        integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
+        src='https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js'
         crossorigin="anonymous"></script>
