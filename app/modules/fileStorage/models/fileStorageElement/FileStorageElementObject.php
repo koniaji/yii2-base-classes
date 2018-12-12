@@ -4,6 +4,8 @@ namespace Zvinger\BaseClasses\app\modules\fileStorage\models\fileStorageElement;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "file_storage_element".
@@ -32,6 +34,18 @@ class FileStorageElementObject extends \yii\db\ActiveRecord
         return [
             TimestampBehavior::class,
         ];
+    }
+
+    public function setTitle($title)
+    {
+        $info = Json::decode($this->info);
+        $info['title'] = $title;
+        $this->info = Json::encode($info);
+    }
+
+    public function getTitle()
+    {
+        return ArrayHelper::getValue(Json::decode($this->info), 'title');
     }
 
 
