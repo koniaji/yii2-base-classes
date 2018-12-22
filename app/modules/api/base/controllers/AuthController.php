@@ -52,7 +52,7 @@ class AuthController extends BaseApiController
         $password = $this->checkAndGet('password');
         $user = UserObject::find()->andWhere(['or', ['username' => $username], ['email' => $username]])->one();
 
-        if (!$user->validatePassword($password)) {
+        if (empty($user) || !$user->validatePassword($password)) {
             throw new UnauthorizedHttpException("Wrong username or password");
         }
 
