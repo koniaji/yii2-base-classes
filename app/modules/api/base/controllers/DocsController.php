@@ -49,7 +49,9 @@ class DocsController extends Controller
                     Yii::getAlias($basePath . '/controllers'),
                     //                    Yii::getAlias($basePath . '/models'),
                     Yii::getAlias($basePath . '/responses'),
+                    Yii::getAlias($basePath . '/requests'),
                 ],
+                'cache' => null
             ],
             'error'       => [
                 'class' => 'yii\web\ErrorAction',

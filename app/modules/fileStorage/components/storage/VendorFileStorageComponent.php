@@ -31,9 +31,11 @@ class VendorFileStorageComponent extends BaseObject
 
     public function init()
     {
-        $this->_storage_locator = new ServiceLocator([
-            'components' => $this->storageComponents,
-        ]);
+        $this->_storage_locator = new ServiceLocator(
+            [
+                'components' => $this->storageComponents,
+            ]
+        );
         parent::init();
     }
 
@@ -58,6 +60,7 @@ class VendorFileStorageComponent extends BaseObject
      * @return SavedFileModel
      * @throws \yii\base\InvalidConfigException
      * @throws ModelValidateException
+     * @throws BadRequestHttpException
      */
     public function uploadPostFile($fileKey = 'file', $type = null, $category = null)
     {
@@ -70,6 +73,14 @@ class VendorFileStorageComponent extends BaseObject
         return $this->uploadLocalFile($file, $type, $category);
     }
 
+    /**
+     * @param string $filesKey
+     * @param null $type
+     * @param null $category
+     * @return SavedFileModel[]
+     * @throws ModelValidateException
+     * @throws \yii\base\InvalidConfigException
+     */
     public function uploadPostFiles($filesKey = 'file', $type = null, $category = null)
     {
         $type = $type ?: $this->getDefaultType();
@@ -84,7 +95,7 @@ class VendorFileStorageComponent extends BaseObject
 
     private function getDefaultType()
     {
-        return env('DEFAULT_STORAGE');
+        return env('DEFAULT_STORAGE', 'default');
     }
 
     /**
@@ -94,19 +105,24 @@ class VendorFileStorageComponent extends BaseObject
      */
     private function saveFile(FileStorageSaveResult $fileStorageSaveResult)
     {
-        $object = new FileStorageElementObject([
-            'component' => $fileStorageSaveResult->component,
-            'path'      => $fileStorageSaveResult->path,
-        ]);
+        $object = new FileStorageElementObject(
+            [
+                'component' => $fileStorageSaveResult->component,
+                'path' => $fileStorageSaveResult->path,
+                'title' => $fileStorageSaveResult->fileTitle,
+            ]
+        );
         if (!$object->save()) {
             throw new ModelValidateException($object);
         }
 
-        $result = new SavedFileModel([
-            'component'            => $fileStorageSaveResult->component,
-            'fileStorageElement'   => $object,
-            'fileStorageComponent' => $this,
-        ]);
+        $result = new SavedFileModel(
+            [
+                'component' => $fileStorageSaveResult->component,
+                'fileStorageElement' => $object,
+                'fileStorageComponent' => $this,
+            ]
+        );
 
         return $result;
     }
@@ -128,6 +144,14 @@ class VendorFileStorageComponent extends BaseObject
         $model->component = $this->getStorage($object->component);
 
         return $model;
+    }
+
+    public function deleteFile($file_id)
+    {
+        $file = $this->getFile($file_id);
+        if ($file->component) {
+            return $file->component->deleteFile($file->fileStorageElement->path);
+        }
     }
 
     /**
@@ -154,7 +178,7 @@ class VendorFileStorageComponent extends BaseObject
     public function uploadExternalFile(string $fileUrl, string $extension = null): SavedFileModel
     {
         $extension = $extension ?: 'file';
-        $tmpFile = $this->_temp_folder . '/' . \Yii::$app->security->generateRandomString(10) . '.' . $extension;
+        $tmpFile = $this->_temp_folder.'/'.\Yii::$app->security->generateRandomString(10).'.'.$extension;
         file_put_contents($tmpFile, fopen($fileUrl, 'r'));
 
         return $this->uploadLocalFileByPath($tmpFile);
@@ -170,10 +194,12 @@ class VendorFileStorageComponent extends BaseObject
      */
     public function uploadLocalFileByPath($path, $type = 'default', $category = null): SavedFileModel
     {
-        $file = new UploadedFile([
-            'name'     => $path,
-            'tempName' => $path,
-        ]);
+        $file = new UploadedFile(
+            [
+                'name' => $path,
+                'tempName' => $path,
+            ]
+        );
 
         return $this->uploadLocalFile($file, $type, $category);
     }

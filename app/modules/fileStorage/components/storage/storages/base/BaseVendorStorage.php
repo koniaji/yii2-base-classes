@@ -24,6 +24,7 @@ abstract class BaseVendorStorage extends BaseObject
     {
         $result = $this->saveFile($file);
         $result->component = $this->type;
+        $result->fileTitle = $file->name;
 
         return $result;
     }
@@ -37,5 +38,10 @@ abstract class BaseVendorStorage extends BaseObject
     public function getBaseUrl()
     {
         return NULL;
+    }
+
+    public function deleteFile($path)
+    {
+        return true;
     }
 }
