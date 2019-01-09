@@ -5,6 +5,7 @@ namespace Zvinger\BaseClasses\app\modules\fileStorage\actions;
 
 use Symfony\Component\HttpFoundation\Request;
 use trntv\glide\actions\GlideAction;
+use yii\base\NotSupportedException;
 use yii\db\Exception;
 use Zvinger\BaseClasses\app\modules\fileStorage\components\storage\storages\trntv\TerentevFileStorage;
 use Zvinger\BaseClasses\app\modules\fileStorage\controllers\GlideController;
@@ -28,13 +29,20 @@ class FSGlideAction extends GlideAction
 
     public function run($path = null, $id = null)
     {
+        $object = null;
         if (!empty($id)) {
             $object = $this->controller->module->storage->getFile($id);
             $this->_current_component = $object->fileStorageElement->component;
             $path = $object->fileStorageElement->path;
         }
 
-        return parent::run($path);
+        try {
+            return parent::run($path);
+        } catch (NotSupportedException $e) {
+            if ($object) {
+                return \Yii::$app->response->redirect($object->getFullUrl());
+            }
+        }
     }
 
     public function getComponent($new = false)
