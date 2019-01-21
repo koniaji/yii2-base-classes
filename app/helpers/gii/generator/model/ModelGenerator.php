@@ -8,6 +8,7 @@
 
 namespace Zvinger\BaseClasses\app\helpers\gii\generator\model;
 
+use yii\gii\CodeFile;
 use yii\gii\generators\model\Generator;
 
 class ModelGenerator extends Generator
@@ -16,9 +17,12 @@ class ModelGenerator extends Generator
 
     public $templates = [];
 
+    public $usableClass = null;
+
     public function init()
     {
-        $this->templates['default'] = \Yii::getAlias("@yii/gii/generators/model/default");
+//        $this->templates['default'] = \Yii::getAlias("@yii/gii/generators/model/default");
+        $this->generateRelations = 'none';
         parent::init();
     }
 
@@ -27,11 +31,50 @@ class ModelGenerator extends Generator
         return \Yii::getAlias("@yii/gii/generators/model/form.php");
     }
 
-    protected function generateClassName($tableName, $useSchemaName = NULL)
+    /**
+     * @return CodeFile[]
+     */
+    public function generate()
+    {
+        if ($this->modelClass && strpos($this->modelClass, 'DB') !== 0) {
+            $this->usableClass = $this->modelClass;
+            $this->modelClass = 'DB'.$this->usableClass;
+        }
+        $files = parent::generate();
+
+        if ($this->usableClass) {
+            $queryClassName = $this->usableClass.'Query';
+            $params = [];
+            $params['className'] = $this->usableClass;
+            $params['namespace'] = $this->ns;
+            $params['queryClassName'] = $queryClassName;
+            $codeFile = new CodeFile(
+                \Yii::getAlias('@'.str_replace('\\', '/', $this->ns)).'/'.$this->usableClass.'.php',
+                $this->render('use_model.php', $params)
+            );
+            if ($codeFile->operation === $codeFile::OP_OVERWRITE) {
+                $codeFile->operation = $codeFile::OP_SKIP;
+            }
+            $files[] = $codeFile;
+            $params['className'] = $queryClassName;
+            $params['modelClassName'] = $this->usableClass;
+            $this->queryNs = $this->ns;
+            $files[] = new CodeFile(
+                \Yii::getAlias('@'.str_replace('\\', '/', $this->ns)).'/'.$queryClassName.'.php',
+                $this->render('query.php', $params)
+            );
+
+        }
+
+        return $files;
+    }
+
+
+    protected function generateClassName($tableName, $useSchemaName = null)
     {
         if (!empty($this->tablesNamespaces[$tableName])) {
             if ($this->tableName !== $tableName) {
-                return '\\' . $this->tablesNamespaces[$tableName];
+                return '\\'.$this->tablesNamespaces[$tableName];
             }
         }
 
