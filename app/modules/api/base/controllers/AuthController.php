@@ -100,6 +100,8 @@ class AuthController extends BaseApiController
     {
         $code = rand(100000, 999999);
         $static = ResetPasswordInitRequest::createRequest();
+        $email = $static->email;
+        $user = $this->findUserByEmail($email);
         \Yii::$app->email->send(
             new SendData(
                 [
@@ -143,12 +145,19 @@ class AuthController extends BaseApiController
         $request = ResetPasswordConfirmRequest::createRequest();
         $email = $request->email;
         $key = 'key.reset.password.'.$email;
+        $this->findUserByEmail($email);
         $codeSaved = \Yii::$app->keyStorage->get($key);
+
+
+        $b = $request->code == $codeSaved;
+        if (!$b) {
+            throw new BadRequestHttpException("Wrong confirm code");
+        }
 
         return \Yii::createObject(
             [
                 'class' => ResetPasswordInitResponse::class,
-                'success' => $request->code == $codeSaved,
+                'success' => $b,
             ]
         );
     }
@@ -180,7 +189,7 @@ class AuthController extends BaseApiController
         $key = 'key.reset.password.'.$email;
         $codeSaved = \Yii::$app->keyStorage->get($key);
         if ($codeSaved == $request->code) {
-            $user = UserObject::find()->where(['email' => $email])->one();
+            $user = $this->findUserByEmail($email);
             if (empty($user)) {
                 throw new NotFoundHttpException("Пользователь не найден");
             }
@@ -189,7 +198,7 @@ class AuthController extends BaseApiController
             $handler = new UserTokenHandler($user->id);
             $tokenObject = $handler->generateBearerToken();
         } else {
-            throw new BadRequestHttpException("Неверный код");
+            throw new BadRequestHttpException("Wrong confirm code");
         }
 
         return \Yii::createObject(
@@ -198,5 +207,19 @@ class AuthController extends BaseApiController
                 'token' => $tokenObject->token,
             ]
         );
+    }
+
+    /**
+     * @param $email
+     * @return UserObject
+     */
+    public function findUserByEmail($email)
+    {
+        $userObject = UserObject::find()->where(['email' => $email])->one();
+        if (empty($userObject)) {
+            throw new NotFoundHttpException("User not found");
+        }
+
+        return $userObject;
     }
 }

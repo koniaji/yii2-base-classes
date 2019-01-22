@@ -60,8 +60,9 @@ class VendorFileStorageComponent extends BaseObject
      * @return SavedFileModel
      * @throws \yii\base\InvalidConfigException
      * @throws ModelValidateException
+     * @throws BadRequestHttpException
      */
-    public function uploadPostFile($fileKey = 'file', $type = null, $category = null)
+    public function uploadPostFile($fileKey = 'file', $type = null, $saveFileName = null)
     {
         $type = $type ?: $this->getDefaultType();
         $file = UploadedFile::getInstanceByName($fileKey);
@@ -69,16 +70,24 @@ class VendorFileStorageComponent extends BaseObject
             throw new BadRequestHttpException("File not given");
         }
 
-        return $this->uploadLocalFile($file, $type, $category);
+        return $this->uploadLocalFile($file, $type, $saveFileName);
     }
 
-    public function uploadPostFiles($filesKey = 'file', $type = null, $category = null)
+    /**
+     * @param string $filesKey
+     * @param null $type
+     * @param null $category
+     * @return SavedFileModel[]
+     * @throws ModelValidateException
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function uploadPostFiles($filesKey = 'file', $type = null, $saveFileName = null)
     {
         $type = $type ?: $this->getDefaultType();
         $files = UploadedFile::getInstancesByName($filesKey);
         $result = [];
         foreach ($files as $file) {
-            $result[] = $this->uploadLocalFile($file, $type, $category);
+            $result[] = $this->uploadLocalFile($file, $type, $saveFileName);
         }
 
         return $result;
@@ -100,6 +109,7 @@ class VendorFileStorageComponent extends BaseObject
             [
                 'component' => $fileStorageSaveResult->component,
                 'path' => $fileStorageSaveResult->path,
+                'title' => $fileStorageSaveResult->fileTitle,
             ]
         );
         if (!$object->save()) {
@@ -151,9 +161,12 @@ class VendorFileStorageComponent extends BaseObject
      * @throws ModelValidateException
      * @throws \yii\base\InvalidConfigException
      */
-    public function uploadLocalFile(UploadedFile $file, $type = 'default', $category = null): SavedFileModel
+    public function uploadLocalFile(UploadedFile $file, $type = 'default', $saveFileName = null): SavedFileModel
     {
         $storage = $this->getStorage($type);
+        if ($saveFileName) {
+            $file->name = $saveFileName;
+        }
         $result = $storage->save($file);
 
         return $this->saveFile($result);

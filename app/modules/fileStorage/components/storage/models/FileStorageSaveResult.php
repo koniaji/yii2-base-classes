@@ -15,4 +15,6 @@ class FileStorageSaveResult
     public $component;
 
     public $type;
+
+    public $fileTitle;
 }

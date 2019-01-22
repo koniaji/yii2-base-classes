@@ -10,6 +10,7 @@ namespace Zvinger\BaseClasses\api\controllers;
 
 use yii\rest\Controller;
 use yii\web\BadRequestHttpException;
+use yii\web\Response;
 use Zvinger\BaseClasses\api\filters\OptionsCorsFilter;
 
 class BaseApiController extends Controller
@@ -31,6 +32,8 @@ class BaseApiController extends Controller
             'class' => OptionsCorsFilter::className(),
             'cors'  => array_merge($baseOptions, static::$currentCorsOptions),
         ];
+        $behaviors['contentNegotiator']['formats']['text/html'] = Response::FORMAT_JSON;
+
 
         return array_merge($newBehaviors, $behaviors);
     }

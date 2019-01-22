@@ -13,7 +13,7 @@ use yii\web\Controller;
 use Zvinger\BaseClasses\app\modules\fileStorage\actions\FSGlideAction;
 use Zvinger\BaseClasses\app\modules\fileStorage\VendorFileStorageModule;
 
-class GlideController extends Controller
+class GlideController extends BaseVendorFileStorageModuleController
 {
     /**
      * @var VendorFileStorageModule
