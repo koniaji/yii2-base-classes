@@ -45,6 +45,7 @@ class TerentevFileStorage extends BaseVendorStorage
      */
     protected function saveFile(UploadedFile $file): FileStorageSaveResult
     {
+        $this->saveName = $this->saveName ? true : false;
         if ($this->component instanceof TerentevStorage) {
             $filePath = $this->component->save($file, $this->saveName, !$this->saveName, $file->name);
         } else {
