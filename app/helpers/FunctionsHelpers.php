@@ -13,12 +13,12 @@ class FunctionsHelpers
      * @param bool $overDebug
      * @return bool
      */
-    public static function DebugObject($var = FALSE, $showHtml = FALSE, $showFrom = TRUE, $overDebug = FALSE, $calledFrom = NULL)
+    public static function DebugObject($var = false, $showHtml = false, $showFrom = true, $overDebug = false, $calledFrom = null)
     {
         $PROJECT_DEBUG = YII_DEBUG || YII_ENV_TEST;
-        $IS_CONSOLE = (php_sapi_name() == 'cli') ? TRUE : FALSE;
+        $IS_CONSOLE = (php_sapi_name() == 'cli') ? true : false;
         if (!$PROJECT_DEBUG && !$overDebug) {
-            return FALSE;
+            return false;
         }
         if (!$IS_CONSOLE) {
             echo '<div class="debug">';
@@ -50,7 +50,7 @@ class FunctionsHelpers
             echo PHP_EOL;
         }
 
-        $var = print_r($var, TRUE);
+        $var = print_r($var, true);
         if ($showHtml) {
             $var = str_replace('<', '&lt;', str_replace('>', '&gt;', $var));
         }
@@ -62,21 +62,21 @@ class FunctionsHelpers
         }
     }
 
-    public static function GetEnvironment($key, $default = FALSE)
+    public static function GetEnvironment($key, $default = false)
     {
         $value = getenv($key);
-        if ($value === FALSE) {
+        if ($value === false) {
             return $default;
         }
 
         switch (strtolower($value)) {
             case 'true':
             case '(true)':
-                return TRUE;
+                return true;
 
             case 'false':
             case '(false)':
-                return FALSE;
+                return false;
         }
 
         return $value;
@@ -95,7 +95,7 @@ class FunctionsHelpers
 
     public static function checkKeyedData($data, array $keys)
     {
-        $result = TRUE;
+        $result = true;
         $array = (array)$data;
         foreach ($keys as $key) {
             if (!isset($array[$key])) {
@@ -109,7 +109,7 @@ class FunctionsHelpers
 
     protected static $_debugData = [];
 
-    public static function saveDebug($data, $key = NULL)
+    public static function saveDebug($data, $key = null)
     {
         if (is_null($key)) {
             static::$_debugData[] = $data;
@@ -136,9 +136,14 @@ class FunctionsHelpers
         return $message;
     }
 
+    /**
+     * @param $date1
+     * @param $date2
+     * @return int
+     */
     public static function daysBetweenDates($date1, $date2)
     {
-        return (new DateTime($date2))->diff(new DateTime($date1))->format("%a");
+        return (int)(new DateTime($date2))->diff(new DateTime($date1))->format("%a");
     }
 
     public static function getOneDayBefore($date)
