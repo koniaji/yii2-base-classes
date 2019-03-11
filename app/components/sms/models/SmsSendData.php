@@ -15,4 +15,6 @@ class SmsSendData extends BaseObject
     public $phone;
 
     public $message;
+
+    public $from = false;
 }

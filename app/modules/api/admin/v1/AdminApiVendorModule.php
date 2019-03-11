@@ -36,9 +36,11 @@ class AdminApiVendorModule extends AdminApiModule implements BootstrapInterface
 {
     const EVENT_USER_SAVED = 'event_user_saved';
     const EVENT_USER_BEFORE_SEND = 'event_user_before_send';
-    
+
     public function init()
     {
+        !defined("BASE_CRUD_MODULE_PATH") ? define("BASE_CRUD_MODULE_PATH", '/'.$this->getUniqueId()) : true;
+
         \Yii::$app->response->format = Response::FORMAT_JSON;
         \Yii::$app->user->enableSession = false;
         if (!\Yii::$app->request->isOptions) {

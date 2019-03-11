@@ -18,9 +18,15 @@ class TerentevFileStorage extends BaseVendorStorage
     public $componentSettings;
 
     /**
-     * @var Storage
+     * @var Storage|TerentevStorage
      */
     public $component;
+
+    /**
+     * Сохранять ли название файла
+     * @var bool
+     */
+    public $saveName;
 
     /**
      * @throws \yii\base\InvalidConfigException
@@ -39,7 +45,12 @@ class TerentevFileStorage extends BaseVendorStorage
      */
     protected function saveFile(UploadedFile $file): FileStorageSaveResult
     {
-        $filePath = $this->component->save($file);
+        $this->saveName = $this->saveName ? true : false;
+        if ($this->component instanceof TerentevStorage) {
+            $filePath = $this->component->save($file, $this->saveName, !$this->saveName, $file->name);
+        } else {
+            $filePath = $this->component->save($file, $this->saveName, !$this->saveName);
+        }
         $result = new FileStorageSaveResult();
         $result->path = $filePath;
 

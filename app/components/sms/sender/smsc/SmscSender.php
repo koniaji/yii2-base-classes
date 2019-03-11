@@ -20,7 +20,7 @@ class SmscSender extends BaseSender
 
     protected function sendByService(SmsSendData $data)
     {
-        $this->getService()->send_sms($data->phone, $data->message);
+        $this->getService()->send_sms($data->phone, $data->message,0,0,0,0, $data->from);
     }
 
     private $_service;

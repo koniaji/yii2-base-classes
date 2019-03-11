@@ -5,11 +5,19 @@ namespace Zvinger\BaseClasses\app\modules\fileStorage\actions;
 
 use Symfony\Component\HttpFoundation\Request;
 use trntv\glide\actions\GlideAction;
+use yii\base\NotSupportedException;
+use yii\db\Exception;
 use Zvinger\BaseClasses\app\modules\fileStorage\components\storage\storages\trntv\TerentevFileStorage;
+use Zvinger\BaseClasses\app\modules\fileStorage\controllers\GlideController;
 use Zvinger\BaseClasses\app\modules\fileStorage\VendorFileStorageModule;
 
 class FSGlideAction extends GlideAction
 {
+    /**
+     * @var GlideController
+     */
+    public $controller;
+
     private $_componentInstance;
 
     /**
@@ -17,7 +25,27 @@ class FSGlideAction extends GlideAction
      */
     private $_componentGetter;
 
-    public function getComponent($new = FALSE)
+    private $_current_component = null;
+
+    public function run($path = null, $id = null)
+    {
+        $object = null;
+        if (!empty($id)) {
+            $object = $this->controller->module->storage->getFile($id);
+            $this->_current_component = $object->fileStorageElement->component;
+            $path = $object->fileStorageElement->path;
+        }
+
+        try {
+            return parent::run($path);
+        } catch (NotSupportedException $e) {
+            if ($object) {
+                return \Yii::$app->response->redirect($object->getFullUrl());
+            }
+        }
+    }
+
+    public function getComponent($new = false)
     {
         if (empty($this->_componentInstance) || $new) {
             if (!empty($this->_componentGetter)) {
@@ -27,7 +55,7 @@ class FSGlideAction extends GlideAction
                 $this->_componentInstance = parent::getComponent();
             }
         }
-        $this->_componentInstance->signKey = FALSE;
+        $this->_componentInstance->signKey = false;
 
         return $this->_componentInstance;
     }
@@ -50,10 +78,10 @@ class FSGlideAction extends GlideAction
 
     protected function getServer()
     {
-        $componentName = \Yii::$app->request->get('component');
-        $storage = VendorFileStorageModule::getInstance()->storage->getStorage($componentName);
+        $this->_current_component = $this->_current_component ?? \Yii::$app->request->get('component');
+        $storage = VendorFileStorageModule::getInstance()->storage->getStorage($this->_current_component);
         if ($storage instanceof TerentevFileStorage) {
-            $this->getComponent(TRUE)->setSource($storage->component->getFilesystem());
+            $this->getComponent(true)->setSource($storage->component->getFilesystem());
         }
 
         return parent::getServer();

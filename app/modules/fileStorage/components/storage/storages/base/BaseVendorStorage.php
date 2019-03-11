@@ -24,6 +24,7 @@ abstract class BaseVendorStorage extends BaseObject
     {
         $result = $this->saveFile($file);
         $result->component = $this->type;
+        $result->fileTitle = $file->name;
 
         return $result;
     }
