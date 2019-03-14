@@ -10,7 +10,6 @@ namespace Zvinger\BaseClasses\app\graphql;
 
 
 use GraphQL\GraphQL;
-use Obvu\Modules\Api\Admin\submodules\crud\graphql\exceptions\GraphQLSchemaException;
 use Obvu\Modules\Api\Admin\submodules\crud\graphql\schema\Types;
 use yii\base\InvalidArgumentException;
 use yii\helpers\Json;
