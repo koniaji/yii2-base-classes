@@ -91,7 +91,7 @@ class VendorFilterInfoComponent
         foreach ($objects as $object) {
             $result[] = \Yii::createObject([
                 'class' => SingleDictionaryElementForSelect::class,
-                'key'   => $object->id,
+                'key'   => $object->slug,
                 'value' => $object->title,
             ]);
         }
