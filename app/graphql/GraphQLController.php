@@ -12,8 +12,10 @@ namespace Zvinger\BaseClasses\app\graphql;
 use GraphQL\GraphQL;
 use Obvu\Modules\Api\Admin\submodules\crud\graphql\schema\Types;
 use yii\base\InvalidArgumentException;
+use yii\filters\auth\HttpBearerAuth;
 use yii\helpers\Json;
 use Zvinger\BaseClasses\api\controllers\BaseApiController;
+use Zvinger\BaseClasses\app\graphql\base\context\BaseGraphQLContext;
 
 class GraphQLController extends BaseApiController
 {
@@ -25,6 +27,11 @@ class GraphQLController extends BaseApiController
     public $getQuery = null;
 
     /**
+     * @var callable
+     */
+    public $getContext = null;
+
+    /**
      * @inheritdoc
      */
     protected function verbs()
@@ -32,6 +39,18 @@ class GraphQLController extends BaseApiController
         return [
             'index' => ['POST'],
         ];
+    }
+
+    public function behaviors()
+    {
+        $old = parent::behaviors();
+        $behaviors = [];
+        $behaviors['authenticator'] = [
+            'class' => HttpBearerAuth::class,
+            'optional' => ['index']
+        ];
+
+        return array_merge($old, $behaviors);
     }
 
     public function actions()
@@ -87,6 +106,10 @@ class GraphQLController extends BaseApiController
         $myErrorHandler = function (array $errors, callable $formatter) {
             throw new GraphQLSchemaException($errors);
         };
+        $context = $this->getContext ? ($this->getContext)() : new BaseGraphQLContext();
+        if (!($context instanceof BaseGraphQLContext)) {
+            throw new \Exception("Context is not ".BaseGraphQLContext::class.' variable');
+        }
         // огонь!
         $cache = \Yii::$app->cache;
         try {
@@ -94,7 +117,7 @@ class GraphQLController extends BaseApiController
                 $schema,
                 $query,
                 null,
-                null,
+                $context,
                 empty($variables) ? null : $variables,
                 empty($operation) ? null : $operation
             )
