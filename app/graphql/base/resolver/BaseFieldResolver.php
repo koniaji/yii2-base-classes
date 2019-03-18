@@ -26,7 +26,7 @@ abstract class BaseFieldResolver
         }
         if ($result === false) {
             try {
-                $result = static::resolveByMap($info, $value);
+                $resultl= static::resolveByMap($info, $value);
             } catch (\Exception $e) {
             }
         }
