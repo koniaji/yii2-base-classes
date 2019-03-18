@@ -9,6 +9,7 @@
 namespace Zvinger\BaseClasses\app\graphql;
 
 
+use GraphQL\Error\Debug;
 use GraphQL\GraphQL;
 use Obvu\Modules\Api\Admin\submodules\crud\graphql\schema\Types;
 use yii\base\InvalidArgumentException;
@@ -25,6 +26,11 @@ class GraphQLController extends BaseApiController
      * @var callable
      */
     public $getQuery = null;
+
+    /**
+     * @var callable
+     */
+    public $getMutation = null;
 
     /**
      * @var callable
@@ -47,7 +53,7 @@ class GraphQLController extends BaseApiController
         $behaviors = [];
         $behaviors['authenticator'] = [
             'class' => HttpBearerAuth::class,
-            'optional' => ['index']
+            'optional' => ['index'],
         ];
 
         return array_merge($old, $behaviors);
@@ -101,11 +107,12 @@ class GraphQLController extends BaseApiController
         $schema = new \GraphQL\Type\Schema(
             [
                 'query' => ($this->getQuery)(),
+                'mutation' => is_callable($this->getMutation) ? ($this->getMutation)() : null,
             ]
         );
-        $myErrorHandler = function (array $errors, callable $formatter) {
-            throw new GraphQLSchemaException($errors);
-        };
+//        $myErrorHandler = function (array $errors, callable $formatter) {
+//            throw new GraphQLSchemaException($errors);
+//        };
         $context = $this->getContext ? ($this->getContext)() : new BaseGraphQLContext();
         if (!($context instanceof BaseGraphQLContext)) {
             throw new \Exception("Context is not ".BaseGraphQLContext::class.' variable');
@@ -121,8 +128,8 @@ class GraphQLController extends BaseApiController
                 empty($variables) ? null : $variables,
                 empty($operation) ? null : $operation
             )
-                ->setErrorsHandler($myErrorHandler)
-                ->toArray(YII_DEBUG);
+//                ->setErrorsHandler($myErrorHandler)
+                ->toArray(YII_DEBUG ? Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE : false);
         } catch (GraphQLSchemaException $e) {
             \Yii::error('query executed - '.$query);
             \Yii::error($e->getMessage());
