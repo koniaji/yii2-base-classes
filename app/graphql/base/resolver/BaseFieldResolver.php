@@ -24,13 +24,13 @@ abstract class BaseFieldResolver
             $result = static::resolveByFunction($info, $value);
         } catch (\Exception $e) {
         }
-        if ($result === false) {
+        if ($result instanceof NotResolved) {
             try {
-                $result= static::resolveByMap($info, $value);
+                $result = static::resolveByMap($info, $value);
             } catch (\Exception $e) {
             }
         }
-        if ($result === false) {
+        if ($result instanceof NotResolved) {
             $result = static::resolveCurrent($value, $args, $context, $info);
         }
 
@@ -45,21 +45,22 @@ abstract class BaseFieldResolver
     protected static function resolveByMap(ResolveInfo $info, $value)
     {
         $getString = ArrayHelper::getValue(static::getMap(), $info->fieldName, $info->fieldName);
-
         if ($getString) {
-            return ArrayHelper::getValue($value, $getString);
+            return ArrayHelper::getValue($value, $getString, new NotResolved());
         }
 
-        return null;
+        return new NotResolved();
     }
 
     protected static function resolveByFunction(ResolveInfo $info, $value)
     {
         if (method_exists(static::class, 'resolve'.$info->fieldName)) {
-            return call_user_func([static::class, 'resolve'.$info->fieldName], $value);
+            $callUserFunc = call_user_func([static::class, 'resolve'.$info->fieldName], $value);
+
+            return $callUserFunc;
         }
 
-        return false;
+        return new NotResolved();
     }
 
     public static function resolveCallback(): callable
