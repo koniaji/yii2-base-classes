@@ -25,7 +25,7 @@ class DataProviderGraphQLType extends BaseGraphQLObjectType
         $config = [
             'fields' => function () use ($elementsTypeClass) {
                 return [
-                    'elements' => [
+                    'items' => [
                         'args' => [
                             'pagination' => PaginationInputType::initType(),
                         ],
@@ -40,6 +40,12 @@ class DataProviderGraphQLType extends BaseGraphQLObjectType
                             }
 
                             return $value->getModels();
+                        },
+                    ],
+                    'totalItems' => [
+                        'type' => Type::int(),
+                        'resolve' => function (DataProviderInterface $value) {
+                            return $value->getTotalCount();
                         },
                     ],
                 ];
