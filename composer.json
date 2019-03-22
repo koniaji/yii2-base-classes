@@ -21,7 +21,6 @@
     "league/flysystem-aws-s3-v3": "^1.0",
     "aws/aws-sdk-php": "~3.0",
     "aws/aws-sdk-php-resources": "^0.3.0",
-    "illuminate/support": "5.*",
     "webonyx/graphql-php": "^v0.13.1"
   },
   "autoload": {
