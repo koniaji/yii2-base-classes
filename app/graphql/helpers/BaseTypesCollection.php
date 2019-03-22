@@ -16,7 +16,7 @@ class BaseTypesCollection
     public static function getField($class, $name = null, $constructVars = [])
     {
         if (empty($name)) {
-            $name = md5($class.json_encode($constructVars));
+            $name = md5($class.json_encode(serialize($constructVars)));
         }
 
         return self::$fields[$name] ?: (self::$fields[$name] = \Yii::createObject($class, $constructVars));

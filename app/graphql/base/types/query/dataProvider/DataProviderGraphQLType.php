@@ -23,6 +23,7 @@ class DataProviderGraphQLType extends BaseGraphQLObjectType
     public function __construct($elementsTypeClass)
     {
         $config = [
+            'name' => "data_provider".md5($elementsTypeClass),
             'fields' => function () use ($elementsTypeClass) {
                 return [
                     'items' => [
