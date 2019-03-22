@@ -22,7 +22,7 @@
     "aws/aws-sdk-php": "~3.0",
     "aws/aws-sdk-php-resources": "^0.3.0",
     "illuminate/support": "5.*",
-    "webonyx/graphql-php": "dev-master"
+    "webonyx/graphql-php": "^v0.13.1"
   },
   "autoload": {
     "psr-4": {
