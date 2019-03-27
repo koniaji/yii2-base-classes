@@ -18,8 +18,8 @@ trait ObjectTypeTrait
      * @param array $constructorVars
      * @return ObjectType
      */
-    public static function initType($constructorVars = [])
+    public static function initType($constructorVars = [], $name = null)
     {
-        return VendorTypesCollection::getField(static::class, null, $constructorVars);
+        return VendorTypesCollection::getField(static::class, $name, $constructorVars);
     }
 }
