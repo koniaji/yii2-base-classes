@@ -83,6 +83,9 @@ class FSGlideAction extends GlideAction
         $server = $this->getServer();
 
         if (!$server->sourceFileExists($path)) {
+            if ($this->debug) {
+                Yii::error('glide not found'.$path);
+            }
             throw new NotFoundHttpException;
         }
 
