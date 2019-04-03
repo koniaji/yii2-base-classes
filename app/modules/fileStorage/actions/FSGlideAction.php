@@ -34,12 +34,6 @@ class FSGlideAction extends GlideAction
 
     private $_current_component = null;
 
-    public function init()
-    {
-        $this->debug = env('GLIDE_FS_DEBUG', false);
-        parent::init();
-    }
-
     public function run(
         $path = null,
         $id = null,
@@ -69,9 +63,7 @@ class FSGlideAction extends GlideAction
 
             return $response;
         } catch (NotSupportedException $e) {
-            if ($this->debug) {
-                Yii::error($e->getMessage());
-            }
+            Yii::error($e->getMessage(), 'glide');
             if ($object) {
                 return \Yii::$app->response->redirect($object->getFullUrl());
             }
@@ -83,9 +75,7 @@ class FSGlideAction extends GlideAction
         $server = $this->getServer();
 
         if (!$server->sourceFileExists($path)) {
-            if ($this->debug) {
-                Yii::error('glide not found'.$path);
-            }
+            Yii::error($path.'not found', 'glide');
             throw new NotFoundHttpException;
         }
 
