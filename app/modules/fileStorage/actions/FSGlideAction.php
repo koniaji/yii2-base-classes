@@ -46,7 +46,6 @@ class FSGlideAction extends GlideAction
             $this->_current_component = $object->fileStorageElement->component;
             $path = $object->fileStorageElement->path;
         }
-
         try {
             if ($routed) {
                 $routeParams = \Yii::$app->request->get();
