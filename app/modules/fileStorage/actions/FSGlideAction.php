@@ -19,6 +19,7 @@ use Zvinger\BaseClasses\app\modules\fileStorage\VendorFileStorageModule;
 
 class FSGlideAction extends GlideAction
 {
+    public $debug = false;
     /**
      * @var GlideController
      */
@@ -32,6 +33,12 @@ class FSGlideAction extends GlideAction
     private $_componentGetter;
 
     private $_current_component = null;
+
+    public function init()
+    {
+        $this->debug = env('GLIDE_FS_DEBUG', false);
+        parent::init();
+    }
 
     public function run(
         $path = null,
@@ -62,6 +69,9 @@ class FSGlideAction extends GlideAction
 
             return $response;
         } catch (NotSupportedException $e) {
+            if ($this->debug) {
+                Yii::error($e->getMessage());
+            }
             if ($object) {
                 return \Yii::$app->response->redirect($object->getFullUrl());
             }
