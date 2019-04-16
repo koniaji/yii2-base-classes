@@ -37,6 +37,8 @@ class GraphQLController extends BaseApiController
      */
     public $getContext = null;
 
+    public $rethrowInternal = false;
+
     /**
      * @inheritdoc
      */
@@ -121,6 +123,7 @@ class GraphQLController extends BaseApiController
         }
         // огонь!
         $cache = \Yii::$app->cache;
+        $debugInfo = $this->rethrowInternal ? Debug::RETHROW_INTERNAL_EXCEPTIONS : false;
         try {
             $result = GraphQL::executeQuery(
                 $schema,
@@ -131,7 +134,7 @@ class GraphQLController extends BaseApiController
                 empty($operation) ? null : $operation
             )
                 ->setErrorsHandler($myErrorHandler)
-                ->toArray(YII_DEBUG ? (Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE) : false);
+                ->toArray(YII_DEBUG ? (Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE ) : $debugInfo);
         } catch (GraphQLSchemaException $e) {
             \Yii::error('query executed - '.$query);
             \Yii::error($e->getMessage());
