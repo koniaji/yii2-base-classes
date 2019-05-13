@@ -37,6 +37,8 @@ class GraphQLController extends BaseApiController
      */
     public $getContext = null;
 
+    public $rethrowInternal = false;
+
     /**
      * @inheritdoc
      */
@@ -110,15 +112,18 @@ class GraphQLController extends BaseApiController
                 'mutation' => is_callable($this->getMutation) ? ($this->getMutation)() : null,
             ]
         );
-//        $myErrorHandler = function (array $errors, callable $formatter) {
-//            throw new GraphQLSchemaException($errors);
-//        };
+        $myErrorHandler = function (array $errors, callable $formatter) {
+            \Yii::error('GraphQL Error:'.json_encode($errors), 'graphql');
+
+            return array_map($formatter, $errors);
+        };
         $context = $this->getContext ? ($this->getContext)() : new BaseGraphQLContext();
         if (!($context instanceof BaseGraphQLContext)) {
             throw new \Exception("Context is not ".BaseGraphQLContext::class.' variable');
         }
         // огонь!
         $cache = \Yii::$app->cache;
+        $debugInfo = $this->rethrowInternal ? Debug::RETHROW_INTERNAL_EXCEPTIONS : false;
         try {
             $result = GraphQL::executeQuery(
                 $schema,
@@ -128,8 +133,8 @@ class GraphQLController extends BaseApiController
                 empty($variables) ? null : $variables,
                 empty($operation) ? null : $operation
             )
-//                ->setErrorsHandler($myErrorHandler)
-                ->toArray(YII_DEBUG ? Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE : false);
+                ->setErrorsHandler($myErrorHandler)
+                ->toArray(YII_DEBUG ? (Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE ) : $debugInfo);
         } catch (GraphQLSchemaException $e) {
             \Yii::error('query executed - '.$query);
             \Yii::error($e->getMessage());
