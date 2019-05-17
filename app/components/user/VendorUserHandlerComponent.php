@@ -41,11 +41,12 @@ class VendorUserHandlerComponent extends Component
      * @param $email
      * @param $password
      * @param null $username
+     * @param null $special
      * @return UserObject
      * @throws \Exception
      * @throws UserCreateException
      */
-    public function createUser($email, $password, $username = null)
+    public function createUser($email, $password, $username = null, $special = null)
     {
         $handler = new UserCreateHandler();
         \Yii::configure(
@@ -58,7 +59,7 @@ class VendorUserHandlerComponent extends Component
         );
 
         $userObject = $handler->createUser();
-        $this->trigger(self::EVENT_USER_CREATED, new UserCreatedEvent(['user' => $userObject]));
+        $this->trigger(self::EVENT_USER_CREATED, new UserCreatedEvent(['user' => $userObject, 'special'=> $special]));
 
         return $userObject;
     }
