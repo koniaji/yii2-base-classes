@@ -19,7 +19,11 @@ class RegistrationController
     public function actionCreateUser()
     {
         $request = CreateUserRequest::createRequest();
-        (new VendorUserHandlerComponent)->createUser($request->email, $request->password, $request->login, $request->special);
+        $user = (new VendorUserHandlerComponent)
+            ->createUser($request->email, $request->password, $request->login, $request->special);
+        if ($user) {
+            return true;
+        }
 
     }
 

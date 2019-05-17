@@ -28,6 +28,8 @@ class VendorUserHandlerComponent extends Component
 {
     const EVENT_USER_CREATED = 'event_user_created';
 
+    const EVENT_USER_BEFORE_CREATE = 'event_user_before_create';
+
     public $onlineSeconds = 3 * MINUTE;
 
     public $onlineAttribute = 'logged_at';
@@ -48,6 +50,8 @@ class VendorUserHandlerComponent extends Component
      */
     public function createUser($email, $password, $username = null, $special = null)
     {
+        $this->trigger(self::EVENT_USER_BEFORE_CREATE, new UserCreatedEvent(['special'=> $special]));
+
         $handler = new UserCreateHandler();
         \Yii::configure(
             $handler,
