@@ -37,7 +37,7 @@ class CreateUserRequest extends BaseApiRequest
     public $login;
 
     /**
-     * @var string
+     * @var object
      * @SWG\Property()
      */
     public $special;
