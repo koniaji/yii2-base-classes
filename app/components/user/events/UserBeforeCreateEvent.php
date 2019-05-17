@@ -14,4 +14,10 @@ use yii\base\Event;
 class UserBeforeCreateEvent extends Event
 {
     public $special;
+
+    public $username;
+
+    public $password;
+
+    public $email;
 }
