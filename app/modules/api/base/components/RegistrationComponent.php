@@ -52,9 +52,13 @@ class RegistrationComponent extends Component
             throw new RecaptchaNotFound();
         }
 
+        if (!isset($request->special['recaptchaResponseCode'])){
+            throw new BadRequestHttpException('Recaptcha response code not found');
+        }
+
         $remoteIp = (isset($this->recaptcha['remoteIp'])) ? $this->recaptcha['remoteIp'] : $_SERVER['REMOTE_ADDR'];
         $recaptcha = new \ReCaptcha\ReCaptcha($this->recaptcha['secret']);
-        $resp = $recaptcha->verify($request->special['recaptcha-response'], $remoteIp);
+        $resp = $recaptcha->verify($request->special['recaptchaResponseCode'], $remoteIp);
 
         if (!$resp->isSuccess()) {
             throw new BadRequestHttpException($resp->getErrorCodes());

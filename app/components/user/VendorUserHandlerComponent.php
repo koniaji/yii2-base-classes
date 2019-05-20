@@ -50,6 +50,15 @@ class VendorUserHandlerComponent extends Component
      */
     public function createUser($email, $password, $username = null, $special = null)
     {
+        $this->trigger(self::EVENT_USER_BEFORE_CREATE, new UserBeforeCreateEvent(
+            [
+                'special' => $special,
+                'email' => $email,
+                'password' => $password,
+                'username' => $username
+            ]
+        ));
+
         $handler = new UserCreateHandler();
         \Yii::configure(
             $handler,
