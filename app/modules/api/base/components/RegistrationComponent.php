@@ -9,6 +9,7 @@
 namespace Zvinger\BaseClasses\app\modules\api\base\components;
 
 
+use app\modules\api\base\responses\registration\RegistrationResponse;
 use yii\base\Component;
 use yii\web\BadRequestHttpException;
 use Zvinger\BaseClasses\app\components\user\VendorUserHandlerComponent;
@@ -20,7 +21,7 @@ class RegistrationComponent extends Component
 {
     public $recaptcha = [];
 
-    public function run(RegistrationRequest $request)
+    public function run(RegistrationRequest $request): RegistrationResponse
     {
         if ($this->recaptcha) {
             $this->checkRecaptcha($request);
@@ -33,7 +34,12 @@ class RegistrationComponent extends Component
             $request->special
         );
 
-        return true;
+        return \Yii::configure(
+            new RegistrationResponse(),
+            [
+                'status' => true,
+            ]
+        );
     }
 
     private function checkRecaptcha($request)

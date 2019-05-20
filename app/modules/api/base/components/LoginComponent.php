@@ -10,17 +10,18 @@ namespace Zvinger\BaseClasses\app\modules\api\base\components;
 
 use app\components\user\identity\UserIdentity;
 use app\models\work\user\object\UserObject;
+use app\modules\api\base\exceptions\GoogleAuthenticatorNotFound;
 use yii\base\Component;
 use yii\web\UnauthorizedHttpException;
 use Zvinger\BaseClasses\app\components\user\token\UserTokenHandler;
 use Zvinger\BaseClasses\app\modules\api\base\requests\auth\LoginRequest;
 use Zvinger\BaseClasses\app\modules\api\base\responses\auth\BaseAuthLoginResponse;
-use Zvinger\GoogleOtp\components\google\GoogleAuthenticatorComponent;
 
 class LoginComponent extends Component
 {
+    public $google2FA = false;
 
-    public function run(LoginRequest $request)
+    public function run(LoginRequest $request): BaseAuthLoginResponse
     {
         $user = UserObject::find()->andWhere(
             ['or',
@@ -32,7 +33,9 @@ class LoginComponent extends Component
             throw new UnauthorizedHttpException("Wrong username or password");
         }
 
-        $this->checkGoogle2FACode($user->id, $request->special);
+        if ($this->google2FA) {
+            $this->checkGoogle2FACode($user->id, $request->special);
+        }
 
         $identity = UserIdentity::findIdentity($user->id);
         $handler = new UserTokenHandler($identity->getId());
@@ -49,8 +52,10 @@ class LoginComponent extends Component
 
     private function checkGoogle2FACode($userId, $special)
     {
-
-        $googleAuthenticatorComponent = new GoogleAuthenticatorComponent();
+        if (!class_exists('Zvinger\GoogleOtp\components\google\GoogleAuthenticatorComponent')) {
+            throw new GoogleAuthenticatorNotFound();
+        }
+        $googleAuthenticatorComponent = new Zvinger\GoogleOtp\components\google\GoogleAuthenticatorComponent();
 
         if ($googleAuthenticatorComponent->getUserGoogleAuthStatus($userId)) {
 
