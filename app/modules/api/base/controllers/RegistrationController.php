@@ -8,23 +8,15 @@
 
 namespace Zvinger\BaseClasses\app\modules\api\base\controllers;
 
-
-use app\models\work\user\object\UserObject;
-use Zvinger\BaseClasses\app\components\user\VendorUserHandlerComponent;
-use Zvinger\BaseClasses\app\modules\api\base\requests\registration\CreateUserRequest;
+use Zvinger\BaseClasses\app\modules\api\base\requests\registration\RegistrationRequest;
 
 
-class RegistrationController
+class RegistrationController extends Controllerr
 {
-    public function actionCreateUser()
+    public function actionIndex()
     {
-        $request = CreateUserRequest::createRequest();
-        $user = (new VendorUserHandlerComponent)
-            ->createUser($request->email, $request->password, $request->login, $request->special);
-        if ($user) {
-            return true;
-        }
-
+        $requst = new RegistrationRequest();
+        return $this->module->registrationComponent->run($requst::createRequest());
     }
 
 }

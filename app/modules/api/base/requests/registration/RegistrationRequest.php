@@ -16,7 +16,7 @@ use Zvinger\BaseClasses\api\request\BaseApiRequest;
  * @SWG\Definition()
  */
 
-class CreateUserRequest extends BaseApiRequest
+class RegistrationRequest extends BaseApiRequest
 {
     /**
      * @var string
@@ -37,7 +37,7 @@ class CreateUserRequest extends BaseApiRequest
     public $login;
 
     /**
-     * @var object
+     * @var array
      * @SWG\Property()
      */
     public $special;
