@@ -34,7 +34,8 @@ class LoginComponent extends Component
         }
 
         if ($this->google2FA) {
-            $this->checkGoogle2FACode($user->id, $request->special);
+            $google2FACode = $request->special['google2FACode'] ?: false;
+            $this->checkGoogle2FACode($user->id, $google2FACode);
         }
 
         $identity = UserIdentity::findIdentity($user->id);
@@ -50,7 +51,7 @@ class LoginComponent extends Component
         );
     }
 
-    private function checkGoogle2FACode($userId, $special)
+    private function checkGoogle2FACode($userId, $google2FACode)
     {
         if (!class_exists('Zvinger\GoogleOtp\components\google\GoogleAuthenticatorComponent')) {
             throw new GoogleAuthenticatorNotFound();
@@ -59,12 +60,11 @@ class LoginComponent extends Component
 
         if ($googleAuthenticatorComponent->getUserGoogleAuthStatus($userId)) {
 
-            if (!isset($special['google2FACode'])) {
+            if (!$google2FACode) {
                 throw new UnauthorizedHttpException("Google 2fa code not found");
             }
 
-            $code = $special['google2FACode'];
-            $result = $googleAuthenticatorComponent->validateUserCode($userId, $code);
+            $result = $googleAuthenticatorComponent->validateUserCode($userId, $google2FACode);
 
             if (!$result) {
                 throw new UnauthorizedHttpException("Invalid google 2fa code");

@@ -16,7 +16,7 @@ class BaseApiModule extends ApiModule
 {
     public $registrationConfig;
 
-    public $authConfig;
+    public $loginConfig;
 
     public function init()
     {
@@ -27,7 +27,7 @@ class BaseApiModule extends ApiModule
             ],
             'loginComponent' => [
                 'class' => LoginComponent::class,
-                'google2FA' => $this->authConfig['google2FA'] ?: false
+                'google2FA' => $this->loginConfig['google2FA'] ?: false
             ]
         ];
         parent::init();
