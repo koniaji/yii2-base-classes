@@ -1,7 +1,10 @@
 <?php
 
 namespace Zvinger\BaseClasses\app\modules\api\base;
+
 use Zvinger\BaseClasses\app\modules\api\ApiModule;
+use Zvinger\BaseClasses\app\modules\api\base\components\LoginComponent;
+use Zvinger\BaseClasses\app\modules\api\base\components\RegistrationComponent;
 
 /**
  * Created by PhpStorm.
@@ -11,5 +14,23 @@ use Zvinger\BaseClasses\app\modules\api\ApiModule;
  */
 class BaseApiModule extends ApiModule
 {
+    public $registrationConfig;
+
+    public $loginConfig;
+
+    public function init()
+    {
+        $this->components = [
+            'registrationComponent' => [
+                'class' => RegistrationComponent::class,
+                'recaptcha' => $this->registrationConfig['recaptcha'] ?: false
+            ],
+            'loginComponent' => [
+                'class' => LoginComponent::class,
+                'google2FA' => $this->loginConfig['google2FA'] ?: false
+            ]
+        ];
+        parent::init();
+    }
 
 }
