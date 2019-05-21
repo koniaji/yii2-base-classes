@@ -6,7 +6,7 @@
  * Time: 15:48
  */
 
-namespace app\modules\api\base\responses\registration;
+namespace Zvinger\BaseClasses\app\modules\api\base\responses\registration;
 
 
 class RegistrationResponse

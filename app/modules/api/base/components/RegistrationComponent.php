@@ -9,13 +9,13 @@
 namespace Zvinger\BaseClasses\app\modules\api\base\components;
 
 
-use app\modules\api\base\responses\registration\RegistrationResponse;
 use yii\base\Component;
 use yii\web\BadRequestHttpException;
 use Zvinger\BaseClasses\app\components\user\VendorUserHandlerComponent;
 use Zvinger\BaseClasses\app\modules\api\base\exceptions\RecaptchaNotFound;
 use Zvinger\BaseClasses\app\modules\api\base\exceptions\RecaptchaSecretNotFound;
 use Zvinger\BaseClasses\app\modules\api\base\requests\registration\RegistrationRequest;
+use Zvinger\BaseClasses\app\modules\api\base\responses\registration\RegistrationResponse;
 
 class RegistrationComponent extends Component
 {
