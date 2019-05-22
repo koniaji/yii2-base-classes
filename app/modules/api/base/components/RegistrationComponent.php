@@ -12,8 +12,10 @@ namespace Zvinger\BaseClasses\app\modules\api\base\components;
 use app\components\user\identity\UserIdentity;
 use yii\base\Component;
 use yii\web\BadRequestHttpException;
+use Zvinger\BaseClasses\app\components\user\events\UserCreatedEvent;
 use Zvinger\BaseClasses\app\components\user\token\UserTokenHandler;
 use Zvinger\BaseClasses\app\components\user\VendorUserHandlerComponent;
+use Zvinger\BaseClasses\app\modules\api\base\BaseApiModule;
 use Zvinger\BaseClasses\app\modules\api\base\exceptions\RecaptchaNotFound;
 use Zvinger\BaseClasses\app\modules\api\base\exceptions\RecaptchaSecretNotFound;
 use Zvinger\BaseClasses\app\modules\api\base\requests\registration\RegistrationRequest;
@@ -35,6 +37,12 @@ class RegistrationComponent extends Component
             $request->login,
             $request->special
         );
+
+        BaseApiModule::getInstance()->trigger(
+            $vendorUserHandlerComponent::EVENT_USER_CREATED,
+            new UserCreatedEvent(['user' => $userObject, 'special' => $request->special])
+        );
+
         $vendorUserHandlerComponent->loginUser($request->email, $request->password);
 
         $identity = UserIdentity::findIdentity($userObject->id);
