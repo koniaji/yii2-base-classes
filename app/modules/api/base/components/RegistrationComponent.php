@@ -9,8 +9,10 @@
 namespace Zvinger\BaseClasses\app\modules\api\base\components;
 
 
+use app\components\user\identity\UserIdentity;
 use yii\base\Component;
 use yii\web\BadRequestHttpException;
+use Zvinger\BaseClasses\app\components\user\token\UserTokenHandler;
 use Zvinger\BaseClasses\app\components\user\VendorUserHandlerComponent;
 use Zvinger\BaseClasses\app\modules\api\base\exceptions\RecaptchaNotFound;
 use Zvinger\BaseClasses\app\modules\api\base\exceptions\RecaptchaSecretNotFound;
@@ -26,18 +28,24 @@ class RegistrationComponent extends Component
         if ($this->recaptcha) {
             $this->checkRecaptcha($request);
         }
-
-        (new VendorUserHandlerComponent())->createUser(
+        $vendorUserHandlerComponent = new VendorUserHandlerComponent();
+        $userObject = $vendorUserHandlerComponent->createUser(
             $request->email,
             $request->password,
             $request->login,
             $request->special
         );
+        $vendorUserHandlerComponent->loginUser($request->email, $request->password);
+
+        $identity = UserIdentity::findIdentity($userObject->id);
+        $handler = new UserTokenHandler($identity->getId());
+        $tokenObject = $handler->generateBearerToken();
 
         return \Yii::configure(
             new RegistrationResponse(),
             [
                 'status' => true,
+                'token' => $tokenObject->token
             ]
         );
     }
@@ -52,7 +60,7 @@ class RegistrationComponent extends Component
             throw new RecaptchaNotFound();
         }
 
-        if (!isset($request->special['recaptchaResponseCode'])){
+        if (!isset($request->special['recaptchaResponseCode'])) {
             throw new BadRequestHttpException('Recaptcha response code not found');
         }
 
