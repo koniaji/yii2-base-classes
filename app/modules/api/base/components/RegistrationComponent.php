@@ -69,7 +69,7 @@ class RegistrationComponent extends Component
         $resp = $recaptcha->verify($request->special['recaptchaResponseCode'], $remoteIp);
 
         if (!$resp->isSuccess()) {
-            throw new BadRequestHttpException($resp->getErrorCodes());
+            throw new BadRequestHttpException('Recaptcha validation error');
         }
     }
 
