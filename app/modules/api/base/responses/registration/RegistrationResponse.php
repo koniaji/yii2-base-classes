@@ -18,4 +18,11 @@ class RegistrationResponse
      */
 
     public $status;
+
+    /**
+     * @var string
+     * @SWG\Property()
+     */
+
+    public $token;
 }
